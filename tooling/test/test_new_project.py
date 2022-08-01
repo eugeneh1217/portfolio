@@ -5,6 +5,7 @@ import shutil
 import unittest
 
 def call_script(script: str, *script_args: str) -> subprocess.CompletedProcess:
+    # pylint: disable=subprocess-run-check
     return subprocess.run(['bash', script, *script_args], stdout=subprocess.PIPE)
 
 class NewProjectTest(unittest.TestCase):
@@ -33,7 +34,7 @@ class NewProjectTest(unittest.TestCase):
 
     def assert_stdout(self, result: subprocess.CompletedProcess, expected: str):
         self.assertEqual(result.stdout.decode('utf-8'), expected)
-        
+
     def assert_file_contents_equal(self, file: io.FileIO, expected: str):
         raw_content = file.readlines()
         joined_content = ''.join(raw_content)
@@ -54,7 +55,7 @@ class NewProjectHelpTest(NewProjectTest):
 class NewProjectCTest(NewProjectTest):
     PROJECT_NAME = 'TEST_C_PROJECT'
     PROJECT_LANGUAGE = 'c'
-    
+
     def test_no_test(self):
         result = self.create_new_project()
         self.assertTrue(os.path.isdir("TEST_C_PROJECT"))
@@ -70,7 +71,8 @@ class NewProjectCTest(NewProjectTest):
             '    src/main.c\n)\n\n'
             'target_include_directories(TEST_C_PROJECT PUBLIC include/)\n'
         )
-        with open(f'{self.PROJECT_NAME}/CMakeLists.txt') as cmakelist:
+        cmakelist_path = f'{self.PROJECT_NAME}/CMakeLists.txt'
+        with open(cmakelist_path, encoding='utf-8') as cmakelist:
             self.assert_file_contents_equal(cmakelist, expected)
         self.assert_exit_success(result)
         self.assert_stdout(result, (
@@ -80,7 +82,7 @@ class NewProjectCTest(NewProjectTest):
             'generating CMakeLists.txt: TEST_C_PROJECT/CMakeLists.txt\n'
             'skipping test generation\n'
         ))
-        
+
     def test_with_test(self):
         result = self.create_new_project('-t')
         self.assertTrue(os.path.isdir("TEST_C_PROJECT"))
@@ -118,7 +120,8 @@ class NewProjectCTest(NewProjectTest):
             'include(GoogleTest)\n'
             'gtest_discover_tests(TEST_C_PROJECT_test)\n'
         )
-        with open(f'{self.PROJECT_NAME}/CMakeLists.txt') as cmakelist:
+        cmakelist_path = f'{self.PROJECT_NAME}/CMakeLists.txt'
+        with open(cmakelist_path, encoding='utf-8') as cmakelist:
             self.assert_file_contents_equal(cmakelist, expected)
         self.assert_exit_success(result)
         self.assert_stdout(result, (
