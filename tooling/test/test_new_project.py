@@ -6,7 +6,10 @@ import unittest
 
 def call_script(script: str, *script_args: str) -> subprocess.CompletedProcess:
     # pylint: disable=subprocess-run-check
-    return subprocess.run(['bash', script, *script_args], stdout=subprocess.PIPE)
+    return subprocess.run(
+        ['bash', script, *script_args],
+        stdout=subprocess.PIPE
+    )
 
 class NewProjectTest(unittest.TestCase):
     PROJECT_NAME = "TEST_PROJECT"
