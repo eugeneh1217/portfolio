@@ -42,6 +42,17 @@ class NewProjectTest(unittest.TestCase):
         raw_content = file.readlines()
         joined_content = ''.join(raw_content)
         self.assertEqual(joined_content, expected)
+        
+    def assert_file_exists(self, file_path):
+        assert os.path.isfile(file_path), (
+            f'Expected file "{file_path}" does not exist'
+        )
+        
+    def assert_dir_exists(self, dir_path):
+        assert os.path.isdir(dir_path), (
+            f'Expected directory "{dir_path}" does not exist'
+        )
+        
 
 class NewProjectHelpTest(NewProjectTest):
     def test_exit_success(self):
@@ -61,10 +72,11 @@ class NewProjectCTest(NewProjectTest):
 
     def test_no_test(self):
         result = self.create_new_project()
-        self.assertTrue(os.path.isdir("TEST_C_PROJECT"))
-        self.assertTrue(os.path.isdir("TEST_C_PROJECT/src"))
-        self.assertTrue(os.path.isdir("TEST_C_PROJECT/include"))
-        self.assertTrue(os.path.isfile("TEST_C_PROJECT/CMakeLists.txt"))
+        self.assert_dir_exists("TEST_C_PROJECT")
+        self.assert_dir_exists("TEST_C_PROJECT/src")
+        self.assert_dir_exists("TEST_C_PROJECT/include")
+        self.assert_file_exists("TEST_C_PROJECT/src/main.c")
+        self.assert_file_exists("TEST_C_PROJECT/CMakeLists.txt")
         expected = (
             'cmake_minimum_required(VERSION 3.6.0)\n\n'
             'project(TEST_C_PROJECT)\n\n'
@@ -88,10 +100,13 @@ class NewProjectCTest(NewProjectTest):
 
     def test_with_test(self):
         result = self.create_new_project('-t')
-        self.assertTrue(os.path.isdir("TEST_C_PROJECT"))
-        self.assertTrue(os.path.isdir("TEST_C_PROJECT/src"))
-        self.assertTrue(os.path.isdir("TEST_C_PROJECT/include"))
-        self.assertTrue(os.path.isfile("TEST_C_PROJECT/CMakeLists.txt"))
+        self.assert_dir_exists("TEST_C_PROJECT")
+        self.assert_dir_exists("TEST_C_PROJECT/src")
+        self.assert_dir_exists("TEST_C_PROJECT/include")
+        self.assert_dir_exists("TEST_C_PROJECT/test/src")
+        self.assert_dir_exists("TEST_C_PROJECT/test/include")
+        self.assert_file_exists("TEST_C_PROJECT/src/main.c")
+        self.assert_file_exists("TEST_C_PROJECT/CMakeLists.txt")
         expected = (
             'cmake_minimum_required(VERSION 3.6.0)\n\n'
             'project(TEST_C_PROJECT)\n\n'

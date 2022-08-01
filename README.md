@@ -10,6 +10,8 @@ Currently, tooling contains a `new_project.sh` script. This script supports proj
 - c
 - cpp
 
+Tooling scripts should be called from repository root directory.
+
 ## Testing
 
 ### Python

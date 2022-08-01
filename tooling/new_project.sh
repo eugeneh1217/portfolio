@@ -84,6 +84,7 @@ case $lang in
     c | cpp)
 
         generate_directory src $name/src
+        > $name/src/main.$lang
 
         generate_directory include $name/include
 
