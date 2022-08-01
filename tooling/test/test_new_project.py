@@ -4,8 +4,6 @@ import subprocess
 import shutil
 import unittest
 
-from unittest import mock
-
 def call_script(script: str, *script_args: str) -> subprocess.CompletedProcess:
     return subprocess.run(['bash', script, *script_args], stdout=subprocess.PIPE)
 
