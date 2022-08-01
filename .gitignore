@@ -3,3 +3,6 @@ build
 
 # IDE
 .vscode
+
+# Python
+__pycache__
