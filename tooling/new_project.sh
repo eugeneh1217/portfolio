@@ -1,10 +1,14 @@
 #!/bin/bash
 
+# Function definitions
+
 print_usage() {
     echo "usage: bash new_project.sh [-t] <language> <project_name>"
 }
 
 generate_directory() {
+    # create directory with verbosity
+
     # first argument is directory path
     # second argument is type of directory
     printf "generating %s directory: %s\n" $1 $2
@@ -12,11 +16,28 @@ generate_directory() {
 }
 
 replace_in_file() {
+    # replace string in text file
+
     # first argument is string to replace
     # second argument is string to replace with
     # third arugment is file to replace in
     sed -i "s/$1/$2/" $3
 }
+
+fill_cmakelist_template() {
+    # fill name and language in to cmakelist template
+    # name placeholder is "--name--"
+    # language placehold is "--lang--"
+
+    # first argument is project name
+    # second argument is language
+    # third argument is path of template to fill
+
+    replace_in_file "--name--" $1 $3
+    replace_in_file "--lang--" $2 $3
+}
+
+# Flag parsing
 
 testing=0
 
@@ -47,10 +68,16 @@ do
     esac
 done
 
+# Constants
+
+TEMPLATE_PATH=tooling/templates
+CMAKELISTS_PATH=$name/CMakeLists.txt
+
+# Project generation
+
 printf "Creating new \"%s\" project: \"%s\"\n\n" $lang $name
 
 rm -rf $name
-
 mkdir $name
 
 case $lang in
@@ -60,10 +87,9 @@ case $lang in
 
         generate_directory include $name/include
 
-        printf "generating CMakeLists.txt: %s\n" $name/CMakeLists.txt
-        cp tooling/templates/cmakelists_main.txt $name/CMakeLists.txt
-        replace_in_file "--name--" $name $name/CMakeLists.txt
-        replace_in_file "--lang--" $lang $name/CMakeLists.txt
+        printf "generating CMakeLists.txt: %s\n" $CMAKELISTS_PATH
+        cp $TEMPLATE_PATH/cmakelists_main.txt $CMAKELISTS_PATH
+        fill_cmakelist_template $name $lang $CMAKELISTS_PATH
 
         if [ $testing == 1 ];
         then
@@ -72,9 +98,8 @@ case $lang in
             mkdir $name/test/include
 
             echo "adding tests to CMakeLists.txt"
-            cat tooling/templates/cmakelists_test.txt >> $name/CMakeLists.txt
-            replace_in_file "--name--" $name $name/CMakeLists.txt
-            replace_in_file "--lang--" $lang $name/CMakeLists.txt
+            cat $TEMPLATE_PATH/cmakelists_test.txt >> $CMAKELISTS_PATH
+            fill_cmakelist_template $name $lang $CMAKELISTS_PATH
         else
             echo "skipping test generation"
         fi
