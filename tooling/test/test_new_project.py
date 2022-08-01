@@ -42,17 +42,16 @@ class NewProjectTest(unittest.TestCase):
         raw_content = file.readlines()
         joined_content = ''.join(raw_content)
         self.assertEqual(joined_content, expected)
-        
+
     def assert_file_exists(self, file_path):
         assert os.path.isfile(file_path), (
             f'Expected file "{file_path}" does not exist'
         )
-        
+
     def assert_dir_exists(self, dir_path):
         assert os.path.isdir(dir_path), (
             f'Expected directory "{dir_path}" does not exist'
         )
-        
 
 class NewProjectHelpTest(NewProjectTest):
     def test_exit_success(self):
