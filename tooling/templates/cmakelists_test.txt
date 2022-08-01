@@ -1,0 +1,29 @@
+# gtest
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+)
+
+enable_testing()
+
+add_executable(
+    --name--_test
+    test/src/test_main.cc
+)
+
+target_link_libraries(
+    --name--_test
+    gtest
+    gtest_main
+    pthread
+)
+
+target_include_directories(
+    --name--_test PUBLIC
+    include/
+    test/include/
+)
+
+include(GoogleTest)
+gtest_discover_tests(--name--_test)
