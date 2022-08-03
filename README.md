@@ -18,6 +18,25 @@ Tooling scripts should be called from repository root directory.
 
 ## Testing
 
+### C/C++
+Both C and C++ projects are tested with the [Gtest](https://github.com/google/googletest) testing framework.
+Memory leaks are detected with [Valgrind](https://valgrind.org/).
+
+Valgrind can be installed with apt
+```bash
+sudo apt install valgrind
+```
+
+Tests can be run after they are compiled and linked by running the executable with valgrind.
+```bash
+valgrind ./<executable>
+```
+
+For example, if the test executable is called `tests`, they can be executed with Valgrind with
+```bash
+valgrind ./tests
+```
+
 ### Python
 Python tests can be run from root with
 ```bash
