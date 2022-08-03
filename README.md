@@ -4,6 +4,9 @@ This monorepo is Eugene Hong's Engineering Portfolio.
 
 ## Projects
 
+### Hashmap
+Implementation of hashmap in C.
+
 ### Demos
 Project containing explanations and demonstrations of technology features that I struggled to find find satisfactory explanations for online. See project "README.md" for more details.
 
