@@ -3,6 +3,10 @@
 This monorepo is Eugene Hong's Engineering Portfolio.
 
 ## Projects
+
+### Hashmap
+Implementation of hashmap in C.
+
 ### Tooling
 Custom monorepo tooling written in bash and tested with Python's builtin `unittest` module.
 
