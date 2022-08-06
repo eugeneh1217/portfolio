@@ -22,10 +22,10 @@ enable_testing()
 
 add_executable(
     hashmap_test
-    # src/hashmap.c
-    src/bucket.c
-    # test/src/test_hashmap.cc
-    test/src/test_bucket.cc
+    src/hashmap.c
+    # src/bucket.c
+    test/src/test_hashmap.cc
+    # test/src/test_bucket.cc
 )
 
 target_link_libraries(
