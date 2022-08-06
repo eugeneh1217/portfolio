@@ -3,6 +3,10 @@
 This monorepo is Eugene Hong's Engineering Portfolio.
 
 ## Projects
+
+### Demos
+Project containing explanations and demonstrations of technology features that I struggled to find find satisfactory explanations for online. See project "README.md" for more details.
+
 ### Tooling
 Custom monorepo tooling written in bash and tested with Python's builtin `unittest` module.
 
