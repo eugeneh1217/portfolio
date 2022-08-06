@@ -6,7 +6,7 @@ set( CMAKE_CXX_STANDARD 17 )
 
 add_executable(
     hashmap
-    src/hashmap.c
+    # src/hashmap.c
     src/main.c
 )
 
@@ -22,8 +22,10 @@ enable_testing()
 
 add_executable(
     hashmap_test
-    src/hashmap.c
-    test/src/test_hashmap.cc
+    # src/hashmap.c
+    src/bucket.c
+    # test/src/test_hashmap.cc
+    test/src/test_bucket.cc
 )
 
 target_link_libraries(
