@@ -1,4 +1,4 @@
-# Memory Allocation in C
+# Demos
 
 ## Static Allocation Overwrite in C
 `static_allocation` demonstrates overwriting behavior of incremented, statically initialized pointers.
