@@ -26,12 +26,16 @@ void print_items(items_t *items)
 int main()
 {
     printf("\nSTATIC ALLOCATION STARTED\n\n");
+
     int first_data = 3;
+
     int another_int = 0;
     printf("another_int is initially '%d'\n", another_int);
+
     items_t items = {1, &first_data};
     printf("items initalized\n");
     print_items(&items);
+
     add_item(&items, 2);
     printf("'2' added to items\n");
     print_items(&items);

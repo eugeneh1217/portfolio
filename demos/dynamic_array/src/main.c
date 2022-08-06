@@ -5,7 +5,9 @@
 int main(int argc, char *argv[])
 {
     int *array = (int *) malloc(sizeof(int));
+
     array[0] = 5;
+
     if (argc == 2 && !strcmp(argv[1], "-r"))
     {
         array = (int *) realloc(array, sizeof(int) * 100000);
@@ -26,8 +28,9 @@ int main(int argc, char *argv[])
         );
         return 1;
     }
+
     array[100000] = 10;
     printf("array[0] = %d\narray[10000] = %d\n", array[0], array[100000]);
-    
+
     return 0;
 }
