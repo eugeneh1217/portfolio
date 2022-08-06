@@ -4,3 +4,4 @@ cd build
 make
 cd ..
 ./build/demo "${@:2}"
+
