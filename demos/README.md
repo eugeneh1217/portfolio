@@ -1,5 +1,10 @@
 # Demos
 
+A demo can be run with
+```bash
+bash run_demo.sh <demo_name>`
+```
+
 ## Static Allocation Overwrite in C
 `static_allocation` demonstrates overwriting behavior of incremented, statically initialized pointers.
 1. A variable is initialized.
@@ -17,6 +22,8 @@ This happens because static initialization allocates memory on the stack. When t
 3. Elements are added to pointer pointing to dynamically allocated memory.
 4. Data of other variable remains intact.
 
+This happens because dynamic allocations happens on the heap, which is independent of the stack, and allows memory blocks to grow.
+
 ## Dynamic Array in C
 `dynamic_array` demonstrates that reallocation is necessary in the event of a large piece of data.
 1. `int` pointer, representing array, is dynamically allocated.
@@ -24,3 +31,5 @@ This happens because static initialization allocates memory on the stack. When t
 3. If demo is run with `-r` flag, reallocation of correct size occurs.
 4. Value at index 100000 is assigned.
 5. If reallocation occured, code runs to completion printing the assigned values in the array. Otherwise, code fails with segfault.
+
+Without the reallocation, the other allocation got in the way of the growth of the original memory block. Reallocation moved the array data to a memory block large enough for the new data.
