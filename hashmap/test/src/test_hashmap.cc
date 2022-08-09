@@ -79,6 +79,11 @@ TEST_F(PairTest, TestValueConstructor)
         (void *) &second
     );
 
+    EXPECT_EQ(value_pair->first_size, sizeof(char));
+    EXPECT_EQ(value_pair->second_size, sizeof(int));
+    EXPECT_EQ(*(char *) value_pair->first, 'h');
+    EXPECT_EQ(*(int *) value_pair->second, 42);
+
     free_pair(value_pair);
 }
 
