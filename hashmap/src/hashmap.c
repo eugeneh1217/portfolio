@@ -59,7 +59,6 @@ void copy_pair(pair_t *dest, const pair_t *original)
     dest->second_size = original->second_size;
     memcpy(dest->first, original->first, original->first_size);
     memcpy(dest->second, original->second, original->second_size);
-    // dest = original;
 }
 
 // bucket_t implementations
