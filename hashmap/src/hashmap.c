@@ -53,23 +53,35 @@ void pair_insert(pair_t *pair, const void *first_value, const void *second_value
     pair_insert_second(pair, second_value);
 }
 
+void copy_pair(pair_t *dest, const pair_t *original)
+{
+    dest->first_size = original->first_size;
+    dest->second_size = original->second_size;
+    memcpy(dest->first, original->first, original->first_size);
+    memcpy(dest->second, original->second, original->second_size);
+    // dest = original;
+}
+
 // bucket_t implementations
 
-bucket_t *init_bucket()
+bucket_t *init_bucket(size_t key_size, size_t value_size)
 {
     bucket_t *bucket = (bucket_t *) malloc(sizeof(bucket_t));
     bucket->size = 1;
     bucket->count = 0;
+    bucket->data_ = init_pair(key_size, value_size);
     return bucket;
 }
 
 void free_bucket(bucket_t *bucket)
 {
+    free_pair(bucket->data_);
     free(bucket);
 }
 
 void bucket_insert(bucket_t *bucket, const pair_t *pair)
 {
-    
+    // memcpy(bucket->data_, pair, sizeof(pair_t));
+    copy_pair(bucket->data_, pair);
 }
 

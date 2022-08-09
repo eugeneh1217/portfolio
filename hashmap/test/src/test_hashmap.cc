@@ -6,6 +6,21 @@ extern "C"
     #include "hashmap.h"
 }
 
+::testing::AssertionResult expect_pair_equal(const pair_t a, const pair_t b)
+{
+    if (
+        a.first_size == b.first_size
+        and a.second_size == b.second_size
+        and !memcmp(a.first, b.first, a.first_size)
+        and !memcmp(a.second, b.second, a.second_size)
+    )
+    {
+        return ::testing::AssertionSuccess();
+    }
+    return ::testing::AssertionFailure() << "pairs unequal: " << a.first << " "
+           << a.second << " " << b.first << " " << b.second;
+}
+
 class HashmapTest : public ::testing::Test
 {
     public:
@@ -88,6 +103,20 @@ TEST_F(PairTest, TestInsert)
     EXPECT_EQ(* (int *) pair->second, 42);
 }
 
+TEST_F(PairTest, TestCopyPair)
+{
+    pair_t *copy = init_pair(sizeof(char), sizeof(int));
+    char key = 'h';
+    int value = 5;
+    pair_insert(pair, (void *) &key, (void *) &value);
+    copy_pair(copy, pair);
+    EXPECT_TRUE(expect_pair_equal(*copy, *pair));
+    EXPECT_NE(copy, pair);
+    EXPECT_NE(copy->first, pair->first);
+    EXPECT_NE(copy->second, pair->second);
+    free_pair(copy);
+}
+
 class BucketTest : public ::testing::Test
 {
     public:
@@ -95,7 +124,7 @@ class BucketTest : public ::testing::Test
 
         void SetUp()
         {
-            bucket = init_bucket();
+            bucket = init_bucket(sizeof(char), sizeof(int));
         }
 
         void TearDown()
@@ -121,5 +150,11 @@ TEST_F(BucketTest, TestInsert)
         (void *) &value0
     );
     bucket_insert(bucket, pair0);
+
+    expect_pair_equal(*pair0, bucket->data_[0]);
+    EXPECT_NE(pair0, bucket->data_);
+    EXPECT_NE(pair0->first, bucket->data_->first);
+    EXPECT_NE(pair0->second, bucket->data_->second);
+
     free_pair(pair0);
 }
