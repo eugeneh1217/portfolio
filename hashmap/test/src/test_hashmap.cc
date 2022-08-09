@@ -71,26 +71,32 @@ TEST_F(PairTest, TestValueConstructor)
 {
     char first = 'h';
     int second = 42;
+
     pair_t *value_pair = init_pair_values(
         sizeof(first),
         sizeof(second),
         (void *) &first,
         (void *) &second
     );
+
     free_pair(value_pair);
 }
 
 TEST_F(PairTest, TestInsertFirst)
 {
     char first_value = 'h';
+
     pair_insert_first(pair, (void *) &first_value);
+
     EXPECT_EQ(*(char *) pair->first, 'h');
 }
 
 TEST_F(PairTest, TestInsertSecond)
 {
     int second_value = 42;
+
     pair_insert_second(pair, (void *) &second_value);
+
     EXPECT_EQ(*(int *) pair->second, 42);
 }
 
@@ -98,7 +104,9 @@ TEST_F(PairTest, TestInsert)
 {
     char first_value = 'h';
     int second_value = 42;
+
     pair_insert(pair, (void *) &first_value, (void *) &second_value);
+
     EXPECT_EQ(*(char *) pair->first, 'h');
     EXPECT_EQ(* (int *) pair->second, 42);
 }
@@ -109,11 +117,14 @@ TEST_F(PairTest, TestCopyPair)
     char key = 'h';
     int value = 5;
     pair_insert(pair, (void *) &key, (void *) &value);
+
     copy_pair(copy, pair);
+
     EXPECT_TRUE(expect_pair_equal(*copy, *pair));
     EXPECT_NE(copy, pair);
     EXPECT_NE(copy->first, pair->first);
     EXPECT_NE(copy->second, pair->second);
+
     free_pair(copy);
 }
 
