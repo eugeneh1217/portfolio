@@ -20,6 +20,7 @@ typedef struct bucket_t
 {
     size_t size;
     size_t count;
+    pair_t *data_;
 } bucket_t;
 
 typedef struct hashmap_t
@@ -37,9 +38,10 @@ void free_pair(pair_t *pair);
 void pair_insert_first(pair_t *pair, const void *value);
 void pair_insert_second(pair_t *pair, const void *value);
 void pair_insert(pair_t *pair, const void *first_value, const void *second_value);
+void copy_pair(pair_t *dest, const pair_t *original);
 
 // bucket memory management
-bucket_t *init_bucket();
+bucket_t *init_bucket(size_t key_size, size_t value_size);
 void free_bucket(bucket_t *bucket);
 
 // bucket data management
