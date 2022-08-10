@@ -4,6 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef enum ERRORS
+{
+    SUCCESS,
+    KEY_NOT_FOUND_ERR
+} ERRORS;
+
 struct pair_t;
 struct bucket_t;
 struct hashmap_t;
@@ -48,6 +54,7 @@ void free_bucket(bucket_t *bucket);
 
 // bucket data management
 void bucket_insert(bucket_t *bucket, const pair_t *pair);
+int bucket_get(bucket_t *bucket, const void *key, void *ret);
 
 // hasmap memory management
 hashmap_t *init_hashmap();
