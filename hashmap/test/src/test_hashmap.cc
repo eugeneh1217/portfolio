@@ -6,7 +6,13 @@ extern "C"
     #include "hashmap.h"
 }
 
-// TODO: add pair initialization
+pair_t *init_test_pair(char first, int second)
+{
+    pair_t *pair = init_pair_values(
+        sizeof(char), sizeof(int), (void *) &first, (void *) &second
+    );
+    return pair;
+}
 
 ::testing::AssertionResult expect_pair_equal(const pair_t a, const pair_t b)
 {
@@ -171,14 +177,7 @@ TEST_F(BucketTest, TestInit)
 
 TEST_F(BucketTest, TestInsert)
 {
-    char key0 = 'a';
-    int value0 = 2;
-    pair_t *pair0 = init_pair_values(
-        sizeof(char),
-        sizeof(int),
-        (void *) &key0,
-        (void *) &value0
-    );
+    pair_t *pair0 = init_test_pair('a', 2);
 
     bucket_insert(bucket, pair0);
 
@@ -191,32 +190,9 @@ TEST_F(BucketTest, TestInsert)
 
 TEST_F(BucketTest, TestInsertMultiple)
 {
-    char key0 = 'a';
-    int value0 = 2;
-    char key1 = 'b';
-    int value1 = 3;
-    char key2 = 'b';
-    int value2 = 4;
-    pair_t *pair0 = init_pair_values(
-        sizeof(char),
-        sizeof(int),
-        (void *) &key0,
-        (void *) &value0
-    );
-
-    pair_t *pair1 = init_pair_values(
-        sizeof(char),
-        sizeof(int),
-        (void *) &key1,
-        (void *) &value1
-    );
-
-    pair_t *pair2 = init_pair_values(
-        sizeof(char),
-        sizeof(int),
-        (void *) &key2,
-        (void *) &value2
-    );
+    pair_t *pair0 = init_test_pair('a', 2);
+    pair_t *pair1 = init_test_pair('b', 3);
+    pair_t *pair2 = init_test_pair('b', 4);
 
     bucket_insert(bucket, pair0);
 
@@ -247,27 +223,17 @@ TEST_F(BucketTest, TestGet)
     int ret;
     char invalid_key = 'c';
     char key0 = 'a';
-    int value0 = 2;
     char key1 = 'b';
-    int value1 = 3;
-    pair_t *pair0 = init_pair_values(
-        sizeof(char),
-        sizeof(int),
-        (void *) &key0,
-        (void *) &value0
-    );
+    pair_t *pair0 = init_test_pair(key0, 2);
+    pair_t *pair1 = init_test_pair(key1, 3);
 
-    pair_t *pair1 = init_pair_values(
-        sizeof(char),
-        sizeof(int),
-        (void *) &key1,
-        (void *) &value1
-    );
     bucket_insert(bucket, pair0);
     bucket_insert(bucket, pair1);
     
     EXPECT_EQ(bucket_get(bucket, (void *) &key0, (void *) &ret), 0);
     EXPECT_EQ(ret, 2);
+
+    // TODO: use pair1 here
 
     EXPECT_EQ(bucket_get(bucket, (void *) &invalid_key, (void *) &ret), 1);
     EXPECT_EQ(ret, 2);
@@ -278,22 +244,9 @@ TEST_F(BucketTest, TestGet)
 
 TEST_F(BucketTest, TestInitFreeBucketArray)
 {
-    char key0 = 'h';
-    int value0 = 1;
-    char key1 = 'e';
-    int value1 = 2;
-    char key2 = 'l';
-    int value2 = 3;
-
-    pair_t *pair0 = init_pair_values(
-        sizeof(char), sizeof(int), (void *) &key0, (void *) &value0
-    );
-    pair_t *pair1 = init_pair_values(
-        sizeof(char), sizeof(int), (void *) &key1, (void *) &value1
-    );
-    pair_t *pair2 = init_pair_values(
-        sizeof(char), sizeof(int), (void *) &key2, (void *) &value2
-    );
+    pair_t *pair0 = init_test_pair('h', 1);
+    pair_t *pair1 = init_test_pair('e', 2);
+    pair_t *pair2 = init_test_pair('l', 3);
 
     bucket_t *buckets = init_bucket_array(2, sizeof(char), sizeof(int));
     bucket_insert(&buckets[0], pair0);
