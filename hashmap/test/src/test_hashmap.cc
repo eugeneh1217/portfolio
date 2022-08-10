@@ -233,10 +233,11 @@ TEST_F(BucketTest, TestGet)
     EXPECT_EQ(bucket_get(bucket, (void *) &key0, (void *) &ret), 0);
     EXPECT_EQ(ret, 2);
 
-    // TODO: use pair1 here
+    EXPECT_EQ(bucket_get(bucket, (void *) &key1, (void *) &ret), 0);
+    EXPECT_EQ(ret, 3);
 
     EXPECT_EQ(bucket_get(bucket, (void *) &invalid_key, (void *) &ret), 1);
-    EXPECT_EQ(ret, 2);
+    EXPECT_EQ(ret, 3);
 
     free_pair(pair0);
     free_pair(pair1);
