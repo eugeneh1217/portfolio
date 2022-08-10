@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: remove repetative first_size and second_size storage... move to hashmap
 // TODO: adhere to line limit
 // TODO: add hashmap deletion
 // TODO: add github workflow for todo and test passing
@@ -23,8 +22,6 @@ struct hashmap_t;
 
 typedef struct pair_t
 {
-    size_t first_size;
-    size_t second_size;
     void *first;
     void *second;
 } pair_t;
@@ -56,10 +53,10 @@ void free_pair_array(pair_t *pair_array, size_t count);
 
 // pair data
 
-void pair_insert_first(pair_t *pair, const void *value);
-void pair_insert_second(pair_t *pair, const void *value);
-void pair_insert(pair_t *pair, const void *first_value, const void *second_value);
-void copy_pair(pair_t *dest, const pair_t *original);
+void pair_insert_first(pair_t *pair, const void *value, size_t first_size);
+void pair_insert_second(pair_t *pair, const void *value, size_t second_size);
+void pair_insert(pair_t *pair, const void *first_value, const void *second_value, size_t first_size, size_t second_size);
+void copy_pair(pair_t *dest, const pair_t *original, size_t first_size, size_t second_size);
 
 // bucket memory
 

@@ -14,13 +14,12 @@ pair_t *init_test_pair(char first, int second)
     return pair;
 }
 
+// TODO: pass sizes as params
 ::testing::AssertionResult expect_pair_equal(const pair_t a, const pair_t b)
 {
-    EXPECT_EQ(a.first_size, b.first_size);
-    EXPECT_EQ(a.second_size, b.second_size);
     if (
-        !memcmp(a.first, b.first, a.first_size)
-        and !memcmp(a.second, b.second, a.second_size)
+        !memcmp(a.first, b.first, sizeof(char))
+        and !memcmp(a.second, b.second, sizeof(int))
     ) {
         return ::testing::AssertionSuccess();
     }
@@ -69,8 +68,6 @@ TEST_F(PairTestSuite, TestInit)
 {
     pair->first;
     pair->second;
-    EXPECT_EQ(pair->first_size, sizeof(char));
-    EXPECT_EQ(pair->second_size, sizeof(int));
 }
 
 TEST_F(PairTestSuite, TestValueConstructor)
@@ -85,8 +82,6 @@ TEST_F(PairTestSuite, TestValueConstructor)
         (void *) &second
     );
 
-    EXPECT_EQ(value_pair->first_size, sizeof(char));
-    EXPECT_EQ(value_pair->second_size, sizeof(int));
     EXPECT_EQ(*(char *) value_pair->first, 'h');
     EXPECT_EQ(*(int *) value_pair->second, 42);
 
@@ -97,7 +92,7 @@ TEST_F(PairTestSuite, TestInsertFirst)
 {
     char first_value = 'h';
 
-    pair_insert_first(pair, (void *) &first_value);
+    pair_insert_first(pair, (void *) &first_value, sizeof(char));
 
     EXPECT_EQ(*(char *) pair->first, 'h');
 }
@@ -106,7 +101,7 @@ TEST_F(PairTestSuite, TestInsertSecond)
 {
     int second_value = 42;
 
-    pair_insert_second(pair, (void *) &second_value);
+    pair_insert_second(pair, (void *) &second_value, sizeof(int));
 
     EXPECT_EQ(*(int *) pair->second, 42);
 }
@@ -116,7 +111,7 @@ TEST_F(PairTestSuite, TestInsert)
     char first_value = 'h';
     int second_value = 42;
 
-    pair_insert(pair, (void *) &first_value, (void *) &second_value);
+    pair_insert(pair, (void *) &first_value, (void *) &second_value, sizeof(char), sizeof(int));
 
     EXPECT_EQ(*(char *) pair->first, 'h');
     EXPECT_EQ(* (int *) pair->second, 42);
@@ -127,9 +122,9 @@ TEST_F(PairTestSuite, TestCopyPair)
     pair_t *copy = init_pair(sizeof(char), sizeof(int));
     char key = 'h';
     int value = 5;
-    pair_insert(pair, (void *) &key, (void *) &value);
+    pair_insert(pair, (void *) &key, (void *) &value, sizeof(char), sizeof(int));
 
-    copy_pair(copy, pair);
+    copy_pair(copy, pair, sizeof(char), sizeof(int));
 
     EXPECT_TRUE(expect_pair_is_copy(copy, pair));
 
@@ -143,8 +138,8 @@ TEST_F(PairTestSuite, TestInitFreeArray)
     int value0 = 1;
     char key1 = 'e';
     int value1 = 2;
-    pair_insert(pairs, (void *) &key0, (void *) &value0);
-    pair_insert(pairs + 1, (void *) &key1, (void *) &value1);
+    pair_insert(pairs, (void *) &key0, (void *) &value0, sizeof(char), sizeof(int));
+    pair_insert(pairs + 1, (void *) &key1, (void *) &value1, sizeof(char), sizeof(int));
 
     EXPECT_EQ(*(char *) pairs[0].first, 'h');
     EXPECT_EQ(*(int *) pairs[0].second, 1);

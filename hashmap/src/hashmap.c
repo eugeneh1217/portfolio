@@ -5,8 +5,6 @@
 pair_t *init_pair(size_t first_size, size_t second_size)
 {
     pair_t *pair = (pair_t *) malloc(sizeof(pair_t));
-    pair->first_size = first_size;
-    pair->second_size = second_size;
     pair->first = malloc(first_size);
     pair->second = malloc(second_size);
 }
@@ -14,7 +12,7 @@ pair_t *init_pair(size_t first_size, size_t second_size)
 pair_t *init_pair_values(size_t first_size, size_t second_size, const void *first_value, const void *second_value)
 {
     pair_t *pair = init_pair(first_size, second_size);
-    pair_insert(pair, first_value, second_value);
+    pair_insert(pair, first_value, second_value, first_size, second_size);
     return pair;
 }
 
@@ -23,8 +21,6 @@ pair_t *init_pair_array(size_t count, size_t first_size, size_t second_size)
     pair_t *pairs = (pair_t *) malloc(count * sizeof(pair_t));
     for (int i = 0; i < count; i ++)
     {
-        pairs[i].first_size = first_size;
-        pairs[i].second_size = second_size;
         pairs[i].first = malloc(first_size);
         pairs[i].second = malloc(second_size);
     }
@@ -48,28 +44,26 @@ void free_pair_array(pair_t *pair_array, size_t count)
     free(pair_array);
 }
 
-void pair_insert_first(pair_t *pair, const void *value)
+void pair_insert_first(pair_t *pair, const void *value, size_t first_size)
 {
-    memcpy(pair->first, value, pair->first_size);
+    memcpy(pair->first, value, first_size);
 }
 
-void pair_insert_second(pair_t *pair, const void *value)
+void pair_insert_second(pair_t *pair, const void *value, size_t second_size)
 {
-    memcpy(pair->second, value, pair->second_size);
+    memcpy(pair->second, value, second_size);
 }
 
-void pair_insert(pair_t *pair, const void *first_value, const void *second_value)
+void pair_insert(pair_t *pair, const void *first_value, const void *second_value, size_t first_size, size_t second_size)
 {
-    pair_insert_first(pair, first_value);
-    pair_insert_second(pair, second_value);
+    pair_insert_first(pair, first_value, first_size);
+    pair_insert_second(pair, second_value, second_size);
 }
 
-void copy_pair(pair_t *dest, const pair_t *original)
+void copy_pair(pair_t *dest, const pair_t *original, size_t first_size, size_t second_size)
 {
-    dest->first_size = original->first_size;
-    dest->second_size = original->second_size;
-    memcpy(dest->first, original->first, original->first_size);
-    memcpy(dest->second, original->second, original->second_size);
+    memcpy(dest->first, original->first, first_size);
+    memcpy(dest->second, original->second, second_size);
 }
 
 // bucket_t implementations
@@ -116,7 +110,7 @@ void bucket_insert(bucket_t *bucket, const pair_t *pair, size_t key_size, size_t
     {
         if (!memcmp(bucket->pairs_[i].first, pair->first, key_size))
         {
-            pair_insert_second(&bucket->pairs_[i], pair->second);
+            pair_insert_second(&bucket->pairs_[i], pair->second, value_size);
             return;
         }
     }
@@ -126,12 +120,12 @@ void bucket_insert(bucket_t *bucket, const pair_t *pair, size_t key_size, size_t
         bucket->pairs_ = init_pair_array(bucket->size * 2, key_size, value_size);
         for (int i = 0; i < bucket->count; i ++)
         {
-            copy_pair(&bucket->pairs_[i], &temp[i]);
+            copy_pair(&bucket->pairs_[i], &temp[i], key_size, value_size);
         }
         free_pair_array(temp, bucket->size);
         bucket->size *= 2;
     }
-    copy_pair(&bucket->pairs_[bucket->count ++], pair);
+    copy_pair(&bucket->pairs_[bucket->count ++], pair, key_size, value_size);
 }
 
 int bucket_get(bucket_t *bucket, const void *key, size_t key_size, size_t value_size, void *ret)
