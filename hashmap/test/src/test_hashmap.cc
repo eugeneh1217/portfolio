@@ -249,3 +249,37 @@ TEST_F(BucketTest, TestInsertMultiple)
     free_pair(pair1);
     free_pair(pair2);
 }
+
+TEST_F(BucketTest, TestGet)
+{
+    int ret;
+    char invalid_key = 'c';
+    char key0 = 'a';
+    int value0 = 2;
+    char key1 = 'b';
+    int value1 = 3;
+    pair_t *pair0 = init_pair_values(
+        sizeof(char),
+        sizeof(int),
+        (void *) &key0,
+        (void *) &value0
+    );
+
+    pair_t *pair1 = init_pair_values(
+        sizeof(char),
+        sizeof(int),
+        (void *) &key1,
+        (void *) &value1
+    );
+    bucket_insert(bucket, pair0);
+    bucket_insert(bucket, pair1);
+    
+    EXPECT_EQ(bucket_get(bucket, (void *) &key0, (void *) &ret), 0);
+    EXPECT_EQ(ret, 2);
+
+    EXPECT_EQ(bucket_get(bucket, (void *) &invalid_key, (void *) &ret), 1);
+    EXPECT_EQ(ret, 2);
+
+    free_pair(pair0);
+    free_pair(pair1);
+}

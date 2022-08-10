@@ -125,3 +125,15 @@ void bucket_insert(bucket_t *bucket, const pair_t *pair)
     copy_pair(&bucket->data_[bucket->count ++], pair);
 }
 
+int bucket_get(bucket_t *bucket, const void *key, void *ret)
+{
+    for (int i = 0; i < bucket->count; ++ i)
+    {
+        if (!memcmp(bucket->data_[i].first, key, bucket->data_[i].first_size))
+        {
+            memcpy(ret, bucket->data_[i].second, bucket->data_[i].second_size);
+            return SUCCESS;
+        }
+    }
+    return KEY_NOT_FOUND_ERR;
+}
