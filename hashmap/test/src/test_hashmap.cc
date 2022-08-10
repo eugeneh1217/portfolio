@@ -49,7 +49,7 @@ TEST(HashCharTest, TestHash)
     EXPECT_EQ(hash_char((void *) &key, 16), 8); // 104 % 16 = 8
 }
 
-class PairTest : public ::testing::Test
+class PairTestSuite : public ::testing::Test
 {
     public:
         pair_t *pair;
@@ -65,7 +65,7 @@ class PairTest : public ::testing::Test
         }
 };
 
-TEST_F(PairTest, TestInit)
+TEST_F(PairTestSuite, TestInit)
 {
     pair->first;
     pair->second;
@@ -73,7 +73,7 @@ TEST_F(PairTest, TestInit)
     EXPECT_EQ(pair->second_size, sizeof(int));
 }
 
-TEST_F(PairTest, TestValueConstructor)
+TEST_F(PairTestSuite, TestValueConstructor)
 {
     char first = 'h';
     int second = 42;
@@ -93,7 +93,7 @@ TEST_F(PairTest, TestValueConstructor)
     free_pair(value_pair);
 }
 
-TEST_F(PairTest, TestInsertFirst)
+TEST_F(PairTestSuite, TestInsertFirst)
 {
     char first_value = 'h';
 
@@ -102,7 +102,7 @@ TEST_F(PairTest, TestInsertFirst)
     EXPECT_EQ(*(char *) pair->first, 'h');
 }
 
-TEST_F(PairTest, TestInsertSecond)
+TEST_F(PairTestSuite, TestInsertSecond)
 {
     int second_value = 42;
 
@@ -111,7 +111,7 @@ TEST_F(PairTest, TestInsertSecond)
     EXPECT_EQ(*(int *) pair->second, 42);
 }
 
-TEST_F(PairTest, TestInsert)
+TEST_F(PairTestSuite, TestInsert)
 {
     char first_value = 'h';
     int second_value = 42;
@@ -122,7 +122,7 @@ TEST_F(PairTest, TestInsert)
     EXPECT_EQ(* (int *) pair->second, 42);
 }
 
-TEST_F(PairTest, TestCopyPair)
+TEST_F(PairTestSuite, TestCopyPair)
 {
     pair_t *copy = init_pair(sizeof(char), sizeof(int));
     char key = 'h';
@@ -136,7 +136,7 @@ TEST_F(PairTest, TestCopyPair)
     free_pair(copy);
 }
 
-TEST_F(PairTest, TestInitFreeArray)
+TEST_F(PairTestSuite, TestInitFreeArray)
 {
     pair_t *pairs = init_pair_array(2, sizeof(char), sizeof(int));
     char key0 = 'h';
@@ -153,7 +153,7 @@ TEST_F(PairTest, TestInitFreeArray)
     free_pair_array(pairs, 2);
 }
 
-class BucketTest : public ::testing::Test
+class BucketTestSuite : public ::testing::Test
 {
     public:
         bucket_t *bucket;
@@ -169,13 +169,13 @@ class BucketTest : public ::testing::Test
         }
 };
 
-TEST_F(BucketTest, TestInit)
+TEST_F(BucketTestSuite, TestInit)
 {
     EXPECT_EQ(bucket->size, 1);
     EXPECT_EQ(bucket->count, 0);
 }
 
-TEST_F(BucketTest, TestInsert)
+TEST_F(BucketTestSuite, TestInsert)
 {
     pair_t *pair0 = init_test_pair('a', 2);
 
@@ -188,7 +188,7 @@ TEST_F(BucketTest, TestInsert)
     free_pair(pair0);
 }
 
-TEST_F(BucketTest, TestInsertMultiple)
+TEST_F(BucketTestSuite, TestInsertMultiple)
 {
     pair_t *pair0 = init_test_pair('a', 2);
     pair_t *pair1 = init_test_pair('b', 3);
@@ -218,7 +218,7 @@ TEST_F(BucketTest, TestInsertMultiple)
     free_pair(pair2);
 }
 
-TEST_F(BucketTest, TestGet)
+TEST_F(BucketTestSuite, TestGet)
 {
     int ret;
     char invalid_key = 'c';
@@ -243,7 +243,7 @@ TEST_F(BucketTest, TestGet)
     free_pair(pair1);
 }
 
-TEST_F(BucketTest, TestInitFreeBucketArray)
+TEST_F(BucketTestSuite, TestInitFreeBucketArray)
 {
     pair_t *pair0 = init_test_pair('h', 1);
     pair_t *pair1 = init_test_pair('e', 2);
@@ -265,7 +265,7 @@ TEST_F(BucketTest, TestInitFreeBucketArray)
     free_pair(pair2);
 }
 
-class HashmapTest : public ::testing::Test
+class HashmapTestSuite : public ::testing::Test
 {
     public:
         hashmap_t *hashmap;
@@ -281,7 +281,7 @@ class HashmapTest : public ::testing::Test
         }
 };
 
-TEST_F(HashmapTest, TestInit)
+TEST_F(HashmapTestSuite, TestInit)
 {
     EXPECT_EQ(hashmap->size_, 8);
     EXPECT_EQ(hashmap->count, 0);
@@ -290,7 +290,7 @@ TEST_F(HashmapTest, TestInit)
     EXPECT_EQ(hashmap->hashfunc, hash_char);
 }
 
-TEST_F(HashmapTest, TestInsert)
+TEST_F(HashmapTestSuite, TestInsert)
 {
     char key0 = 'h';
     int value0 = 1;
@@ -306,7 +306,7 @@ TEST_F(HashmapTest, TestInsert)
     EXPECT_EQ(*(int *) hashmap->buckets_[5].pairs_[0].second, value1);
 }
 
-TEST_F(HashmapTest, TestGet)
+TEST_F(HashmapTestSuite, TestGet)
 {
     int ret;
     char invalid_key = 'l';
