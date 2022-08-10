@@ -17,7 +17,6 @@ pair_t *init_test_pair(char first, int second)
     return pair;
 }
 
-// TODO: pass sizes as params
 ::testing::AssertionResult expect_pair_equal(const pair_t a, const pair_t b)
 {
     if (
