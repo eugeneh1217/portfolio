@@ -5,6 +5,7 @@
 #include <string.h>
 
 // TODO: remove repetative first_size and second_size storage... move to hashmap
+// TODO: adhere to line limit
 // TODO: add hashmap deletion
 // TODO: add github workflow for todo and test passing
 
