@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: remove "management" from section comments
 // TODO: rename data_ to explain more context
 // TODO: remove repetative first_size and second_size storage... move to hashmap
 // TODO: add hashmap deletion
@@ -46,34 +45,34 @@ typedef struct hashmap_t
     bucket_t *data_;
 } hashmap_t;
 
-// pair memory management
+// pair memory
 pair_t *init_pair(size_t first_size, size_t second_size);
 pair_t *init_pair_values(size_t first_size, size_t second_size, const void *first_value, const void *second_value);
 pair_t *init_pair_array(size_t count, size_t first_size, size_t second_size);
 void free_pair(pair_t *pair);
 void free_pair_array(pair_t *pair_array, size_t count);
 
-// pair data management
+// pair data
 void pair_insert_first(pair_t *pair, const void *value);
 void pair_insert_second(pair_t *pair, const void *value);
 void pair_insert(pair_t *pair, const void *first_value, const void *second_value);
 void copy_pair(pair_t *dest, const pair_t *original);
 
-// bucket memory management
+// bucket memory
 bucket_t *init_bucket(size_t key_size, size_t value_size);
 bucket_t *init_bucket_array(size_t count, size_t key_size, size_t value_size);
 void free_bucket(bucket_t *bucket);
 void free_bucket_array(bucket_t *buckets, size_t count);
 
-// bucket data management
+// bucket data
 void bucket_insert(bucket_t *bucket, const pair_t *pair);
 int bucket_get(bucket_t *bucket, const void *key, void *ret);
 
-// hasmap memory management
+// hasmap memory
 hashmap_t *init_hashmap(size_t key_size, size_t value_size, hashfunc_t hashfunc);
 void free_hashmap(hashmap_t *hashmap);
 
-// hasmap data management
+// hasmap data
 void hashmap_insert(hashmap_t *hashmap, const void *key, const void *value);
 int hashmap_get(hashmap_t *hashmap, const void *key, void *ret);
 
