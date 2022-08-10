@@ -179,7 +179,7 @@ TEST_F(BucketTestSuite, TestInsert)
 {
     pair_t *pair0 = init_test_pair('a', 2);
 
-    bucket_insert(bucket, pair0);
+    bucket_insert(bucket, pair0, sizeof(char), sizeof(int));
 
     EXPECT_TRUE(expect_pair_is_copy(bucket->pairs_, pair0));
     EXPECT_EQ(bucket->size, 1);
@@ -194,19 +194,19 @@ TEST_F(BucketTestSuite, TestInsertMultiple)
     pair_t *pair1 = init_test_pair('b', 3);
     pair_t *pair2 = init_test_pair('b', 4);
 
-    bucket_insert(bucket, pair0);
+    bucket_insert(bucket, pair0, sizeof(char), sizeof(int));
 
     EXPECT_EQ(bucket->size, 1);
     EXPECT_EQ(bucket->count, 1);
 
-    bucket_insert(bucket, pair1);
+    bucket_insert(bucket, pair1, sizeof(char), sizeof(int));
     EXPECT_EQ(bucket->size, 2);
     EXPECT_EQ(bucket->count, 2);
 
     EXPECT_TRUE(expect_pair_is_copy(bucket->pairs_, pair0));
     EXPECT_TRUE(expect_pair_is_copy(&bucket->pairs_[1], pair1));
     
-    bucket_insert(bucket, pair2);
+    bucket_insert(bucket, pair2, sizeof(char), sizeof(int));
 
     EXPECT_EQ(bucket->size, 2);
     EXPECT_EQ(bucket->count, 2);
@@ -227,16 +227,16 @@ TEST_F(BucketTestSuite, TestGet)
     pair_t *pair0 = init_test_pair(key0, 2);
     pair_t *pair1 = init_test_pair(key1, 3);
 
-    bucket_insert(bucket, pair0);
-    bucket_insert(bucket, pair1);
+    bucket_insert(bucket, pair0, sizeof(char), sizeof(int));
+    bucket_insert(bucket, pair1, sizeof(char), sizeof(int));
     
-    EXPECT_EQ(bucket_get(bucket, (void *) &key0, (void *) &ret), 0);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key0, sizeof(char), sizeof(int), (void *) &ret), 0);
     EXPECT_EQ(ret, 2);
 
-    EXPECT_EQ(bucket_get(bucket, (void *) &key1, (void *) &ret), 0);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key1, sizeof(char), sizeof(int), (void *) &ret), 0);
     EXPECT_EQ(ret, 3);
 
-    EXPECT_EQ(bucket_get(bucket, (void *) &invalid_key, (void *) &ret), 1);
+    EXPECT_EQ(bucket_get(bucket, (void *) &invalid_key, sizeof(char), sizeof(int), (void *) &ret), 1);
     EXPECT_EQ(ret, 3);
 
     free_pair(pair0);
@@ -250,9 +250,9 @@ TEST_F(BucketTestSuite, TestInitFreeBucketArray)
     pair_t *pair2 = init_test_pair('l', 3);
 
     bucket_t *buckets = init_bucket_array(2, sizeof(char), sizeof(int));
-    bucket_insert(&buckets[0], pair0);
-    bucket_insert(&buckets[0], pair1);
-    bucket_insert(&buckets[1], pair2);
+    bucket_insert(&buckets[0], pair0, sizeof(char), sizeof(int));
+    bucket_insert(&buckets[0], pair1, sizeof(char), sizeof(int));
+    bucket_insert(&buckets[1], pair2, sizeof(char), sizeof(int));
 
     EXPECT_TRUE(expect_pair_is_copy(&buckets[0].pairs_[0], pair0));
     EXPECT_TRUE(expect_pair_is_copy(&buckets[0].pairs_[1], pair1));

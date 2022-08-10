@@ -110,11 +110,11 @@ void free_bucket_array(bucket_t *buckets, size_t count)
     free(buckets);
 }
 
-void bucket_insert(bucket_t *bucket, const pair_t *pair)
+void bucket_insert(bucket_t *bucket, const pair_t *pair, size_t key_size, size_t value_size)
 {
     for (int i = 0; i < bucket->count; ++ i)
     {
-        if (!memcmp(bucket->pairs_[i].first, pair->first, pair->first_size))
+        if (!memcmp(bucket->pairs_[i].first, pair->first, key_size))
         {
             pair_insert_second(&bucket->pairs_[i], pair->second);
             return;
@@ -123,7 +123,7 @@ void bucket_insert(bucket_t *bucket, const pair_t *pair)
     pair_t *temp = bucket->pairs_;
     if (bucket->count == bucket->size)
     {
-        bucket->pairs_ = init_pair_array(bucket->size * 2, pair->first_size, pair->second_size);
+        bucket->pairs_ = init_pair_array(bucket->size * 2, key_size, value_size);
         for (int i = 0; i < bucket->count; i ++)
         {
             copy_pair(&bucket->pairs_[i], &temp[i]);
@@ -134,13 +134,13 @@ void bucket_insert(bucket_t *bucket, const pair_t *pair)
     copy_pair(&bucket->pairs_[bucket->count ++], pair);
 }
 
-int bucket_get(bucket_t *bucket, const void *key, void *ret)
+int bucket_get(bucket_t *bucket, const void *key, size_t key_size, size_t value_size, void *ret)
 {
     for (int i = 0; i < bucket->count; ++ i)
     {
-        if (!memcmp(bucket->pairs_[i].first, key, bucket->pairs_[i].first_size))
+        if (!memcmp(bucket->pairs_[i].first, key, key_size))
         {
-            memcpy(ret, bucket->pairs_[i].second, bucket->pairs_[i].second_size);
+            memcpy(ret, bucket->pairs_[i].second, value_size);
             return SUCCESS;
         }
     }
@@ -171,7 +171,7 @@ void hashmap_insert(hashmap_t *hashmap, const void *key, const void *value)
 {
     size_t index = hashmap->hashfunc(key, hashmap->size_);
     pair_t *pair = init_pair_values(hashmap->key_size, hashmap->value_size, key, value);
-    bucket_insert(&hashmap->buckets_[index], pair);
+    bucket_insert(&hashmap->buckets_[index], pair, hashmap->key_size, hashmap->value_size);
     free_pair(pair);
 }
 
@@ -179,7 +179,7 @@ int hashmap_get(hashmap_t *hashmap, const void *key, void *ret)
 {
     for (int i = 0; i < hashmap->size_; ++ i)
     {
-        if (!bucket_get(&hashmap->buckets_[i], key, ret))
+        if (!bucket_get(&hashmap->buckets_[i], key, hashmap->key_size, hashmap->value_size, ret))
         {
             return SUCCESS;
         }
