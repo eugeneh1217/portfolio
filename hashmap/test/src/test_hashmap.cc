@@ -25,8 +25,9 @@ pair_t *init_test_pair(char first, int second)
     ) {
         return ::testing::AssertionSuccess();
     }
-    return ::testing::AssertionFailure() << "pairs unequal: " << *(char *) a.first << " "
-           << *(int *) a.second << " " << *(char *) b.first << " " << *(int *) b.second;
+    return ::testing::AssertionFailure() << "pairs unequal: "
+           << *(char *) a.first << " " << *(int *) a.second << " "
+           << *(char *) b.first << " " << *(int *) b.second;
 }
 
 ::testing::AssertionResult expect_pair_is_copy(const pair_t *a, const pair_t *b)
@@ -113,7 +114,8 @@ TEST_F(PairTestSuite, TestInsert)
     char first_value = 'h';
     int second_value = 42;
 
-    pair_insert(pair, (void *) &first_value, (void *) &second_value, TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    pair_insert(pair, (void *) &first_value, (void *) &second_value,
+                TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     EXPECT_EQ(*(char *) pair->first, 'h');
     EXPECT_EQ(* (int *) pair->second, 42);
@@ -124,7 +126,8 @@ TEST_F(PairTestSuite, TestCopyPair)
     pair_t *copy = init_pair(TEST_KEY_SIZE, TEST_VALUE_SIZE);
     char key = 'h';
     int value = 5;
-    pair_insert(pair, (void *) &key, (void *) &value, TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    pair_insert(pair, (void *) &key, (void *) &value,
+                TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     copy_pair(copy, pair, TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
@@ -140,8 +143,10 @@ TEST_F(PairTestSuite, TestInitFreeArray)
     int value0 = 1;
     char key1 = 'e';
     int value1 = 2;
-    pair_insert(pairs, (void *) &key0, (void *) &value0, TEST_KEY_SIZE, TEST_VALUE_SIZE);
-    pair_insert(pairs + 1, (void *) &key1, (void *) &value1, TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    pair_insert(pairs, (void *) &key0, (void *) &value0,
+                TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    pair_insert(pairs + 1, (void *) &key1, (void *) &value1,
+                TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     EXPECT_EQ(*(char *) pairs[0].first, 'h');
     EXPECT_EQ(*(int *) pairs[0].second, 1);
@@ -227,13 +232,16 @@ TEST_F(BucketTestSuite, TestGet)
     bucket_insert(bucket, pair0, TEST_KEY_SIZE, TEST_VALUE_SIZE);
     bucket_insert(bucket, pair1, TEST_KEY_SIZE, TEST_VALUE_SIZE);
     
-    EXPECT_EQ(bucket_get(bucket, (void *) &key0, TEST_KEY_SIZE, TEST_VALUE_SIZE, (void *) &ret), 0);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key0,
+                         TEST_KEY_SIZE, TEST_VALUE_SIZE, (void *) &ret), 0);
     EXPECT_EQ(ret, 2);
 
-    EXPECT_EQ(bucket_get(bucket, (void *) &key1, TEST_KEY_SIZE, TEST_VALUE_SIZE, (void *) &ret), 0);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key1,
+                         TEST_KEY_SIZE, TEST_VALUE_SIZE, (void *) &ret), 0);
     EXPECT_EQ(ret, 3);
 
-    EXPECT_EQ(bucket_get(bucket, (void *) &invalid_key, TEST_KEY_SIZE, TEST_VALUE_SIZE, (void *) &ret), 1);
+    EXPECT_EQ(bucket_get(bucket, (void *) &invalid_key,
+                         TEST_KEY_SIZE, TEST_VALUE_SIZE, (void *) &ret), 1);
     EXPECT_EQ(ret, 3);
 
     free_pair(pair0);

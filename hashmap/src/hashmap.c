@@ -9,7 +9,8 @@ pair_t *init_pair(size_t first_size, size_t second_size)
     pair->second = malloc(second_size);
 }
 
-pair_t *init_pair_values(size_t first_size, size_t second_size, const void *first_value, const void *second_value)
+pair_t *init_pair_values(size_t first_size, size_t second_size, 
+                         const void *first_value, const void *second_value)
 {
     pair_t *pair = init_pair(first_size, second_size);
     pair_insert(pair, first_value, second_value, first_size, second_size);
@@ -54,13 +55,16 @@ void pair_insert_second(pair_t *pair, const void *value, size_t second_size)
     memcpy(pair->second, value, second_size);
 }
 
-void pair_insert(pair_t *pair, const void *first_value, const void *second_value, size_t first_size, size_t second_size)
+void pair_insert(pair_t *pair,
+                 const void *first_value, const void *second_value,
+                 size_t first_size, size_t second_size)
 {
     pair_insert_first(pair, first_value, first_size);
     pair_insert_second(pair, second_value, second_size);
 }
 
-void copy_pair(pair_t *dest, const pair_t *original, size_t first_size, size_t second_size)
+void copy_pair(pair_t *dest, const pair_t *original,
+               size_t first_size, size_t second_size)
 {
     memcpy(dest->first, original->first, first_size);
     memcpy(dest->second, original->second, second_size);
@@ -104,7 +108,8 @@ void free_bucket_array(bucket_t *buckets, size_t count)
     free(buckets);
 }
 
-void bucket_insert(bucket_t *bucket, const pair_t *pair, size_t key_size, size_t value_size)
+void bucket_insert(bucket_t *bucket, const pair_t *pair,
+                   size_t key_size, size_t value_size)
 {
     for (int i = 0; i < bucket->count; ++ i)
     {
@@ -117,7 +122,8 @@ void bucket_insert(bucket_t *bucket, const pair_t *pair, size_t key_size, size_t
     pair_t *temp = bucket->pairs_;
     if (bucket->count == bucket->size)
     {
-        bucket->pairs_ = init_pair_array(bucket->size * 2, key_size, value_size);
+        bucket->pairs_ = init_pair_array(bucket->size * 2,
+                                         key_size, value_size);
         for (int i = 0; i < bucket->count; i ++)
         {
             copy_pair(&bucket->pairs_[i], &temp[i], key_size, value_size);
@@ -128,7 +134,8 @@ void bucket_insert(bucket_t *bucket, const pair_t *pair, size_t key_size, size_t
     copy_pair(&bucket->pairs_[bucket->count ++], pair, key_size, value_size);
 }
 
-int bucket_get(bucket_t *bucket, const void *key, size_t key_size, size_t value_size, void *ret)
+int bucket_get(bucket_t *bucket, const void *key,
+               size_t key_size, size_t value_size, void *ret)
 {
     for (int i = 0; i < bucket->count; ++ i)
     {
@@ -164,8 +171,10 @@ void free_hashmap(hashmap_t *hashmap)
 void hashmap_insert(hashmap_t *hashmap, const void *key, const void *value)
 {
     size_t index = hashmap->hashfunc(key, hashmap->size_);
-    pair_t *pair = init_pair_values(hashmap->key_size, hashmap->value_size, key, value);
-    bucket_insert(&hashmap->buckets_[index], pair, hashmap->key_size, hashmap->value_size);
+    pair_t *pair = init_pair_values(hashmap->key_size, hashmap->value_size,
+                                    key, value);
+    bucket_insert(&hashmap->buckets_[index], pair,
+                  hashmap->key_size, hashmap->value_size);
     free_pair(pair);
 }
 
