@@ -6,10 +6,13 @@ extern "C"
     #include "hashmap.h"
 }
 
+#define TEST_KEY_SIZE sizeof(char)
+#define TEST_VALUE_SIZE sizeof(int)
+
 pair_t *init_test_pair(char first, int second)
 {
     pair_t *pair = init_pair_values(
-        sizeof(char), sizeof(int), (void *) &first, (void *) &second
+        TEST_KEY_SIZE, TEST_VALUE_SIZE, (void *) &first, (void *) &second
     );
     return pair;
 }
@@ -18,8 +21,8 @@ pair_t *init_test_pair(char first, int second)
 ::testing::AssertionResult expect_pair_equal(const pair_t a, const pair_t b)
 {
     if (
-        !memcmp(a.first, b.first, sizeof(char))
-        and !memcmp(a.second, b.second, sizeof(int))
+        !memcmp(a.first, b.first, TEST_KEY_SIZE)
+        and !memcmp(a.second, b.second, TEST_VALUE_SIZE)
     ) {
         return ::testing::AssertionSuccess();
     }
@@ -55,7 +58,7 @@ class PairTestSuite : public ::testing::Test
 
         void SetUp()
         {
-            pair = init_pair(sizeof(char), sizeof(int));
+            pair = init_pair(TEST_KEY_SIZE, TEST_VALUE_SIZE);
         }
 
         void TearDown()
@@ -92,7 +95,7 @@ TEST_F(PairTestSuite, TestInsertFirst)
 {
     char first_value = 'h';
 
-    pair_insert_first(pair, (void *) &first_value, sizeof(char));
+    pair_insert_first(pair, (void *) &first_value, TEST_KEY_SIZE);
 
     EXPECT_EQ(*(char *) pair->first, 'h');
 }
@@ -101,7 +104,7 @@ TEST_F(PairTestSuite, TestInsertSecond)
 {
     int second_value = 42;
 
-    pair_insert_second(pair, (void *) &second_value, sizeof(int));
+    pair_insert_second(pair, (void *) &second_value, TEST_VALUE_SIZE);
 
     EXPECT_EQ(*(int *) pair->second, 42);
 }
@@ -111,7 +114,7 @@ TEST_F(PairTestSuite, TestInsert)
     char first_value = 'h';
     int second_value = 42;
 
-    pair_insert(pair, (void *) &first_value, (void *) &second_value, sizeof(char), sizeof(int));
+    pair_insert(pair, (void *) &first_value, (void *) &second_value, TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     EXPECT_EQ(*(char *) pair->first, 'h');
     EXPECT_EQ(* (int *) pair->second, 42);
@@ -119,12 +122,12 @@ TEST_F(PairTestSuite, TestInsert)
 
 TEST_F(PairTestSuite, TestCopyPair)
 {
-    pair_t *copy = init_pair(sizeof(char), sizeof(int));
+    pair_t *copy = init_pair(TEST_KEY_SIZE, TEST_VALUE_SIZE);
     char key = 'h';
     int value = 5;
-    pair_insert(pair, (void *) &key, (void *) &value, sizeof(char), sizeof(int));
+    pair_insert(pair, (void *) &key, (void *) &value, TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
-    copy_pair(copy, pair, sizeof(char), sizeof(int));
+    copy_pair(copy, pair, TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     EXPECT_TRUE(expect_pair_is_copy(copy, pair));
 
@@ -133,13 +136,13 @@ TEST_F(PairTestSuite, TestCopyPair)
 
 TEST_F(PairTestSuite, TestInitFreeArray)
 {
-    pair_t *pairs = init_pair_array(2, sizeof(char), sizeof(int));
+    pair_t *pairs = init_pair_array(2, TEST_KEY_SIZE, TEST_VALUE_SIZE);
     char key0 = 'h';
     int value0 = 1;
     char key1 = 'e';
     int value1 = 2;
-    pair_insert(pairs, (void *) &key0, (void *) &value0, sizeof(char), sizeof(int));
-    pair_insert(pairs + 1, (void *) &key1, (void *) &value1, sizeof(char), sizeof(int));
+    pair_insert(pairs, (void *) &key0, (void *) &value0, TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    pair_insert(pairs + 1, (void *) &key1, (void *) &value1, TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     EXPECT_EQ(*(char *) pairs[0].first, 'h');
     EXPECT_EQ(*(int *) pairs[0].second, 1);
@@ -155,7 +158,7 @@ class BucketTestSuite : public ::testing::Test
 
         void SetUp()
         {
-            bucket = init_bucket(sizeof(char), sizeof(int));
+            bucket = init_bucket(TEST_KEY_SIZE, TEST_VALUE_SIZE);
         }
 
         void TearDown()
@@ -174,7 +177,7 @@ TEST_F(BucketTestSuite, TestInsert)
 {
     pair_t *pair0 = init_test_pair('a', 2);
 
-    bucket_insert(bucket, pair0, sizeof(char), sizeof(int));
+    bucket_insert(bucket, pair0, TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     EXPECT_TRUE(expect_pair_is_copy(bucket->pairs_, pair0));
     EXPECT_EQ(bucket->size, 1);
@@ -189,19 +192,19 @@ TEST_F(BucketTestSuite, TestInsertMultiple)
     pair_t *pair1 = init_test_pair('b', 3);
     pair_t *pair2 = init_test_pair('b', 4);
 
-    bucket_insert(bucket, pair0, sizeof(char), sizeof(int));
+    bucket_insert(bucket, pair0, TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     EXPECT_EQ(bucket->size, 1);
     EXPECT_EQ(bucket->count, 1);
 
-    bucket_insert(bucket, pair1, sizeof(char), sizeof(int));
+    bucket_insert(bucket, pair1, TEST_KEY_SIZE, TEST_VALUE_SIZE);
     EXPECT_EQ(bucket->size, 2);
     EXPECT_EQ(bucket->count, 2);
 
     EXPECT_TRUE(expect_pair_is_copy(bucket->pairs_, pair0));
     EXPECT_TRUE(expect_pair_is_copy(&bucket->pairs_[1], pair1));
     
-    bucket_insert(bucket, pair2, sizeof(char), sizeof(int));
+    bucket_insert(bucket, pair2, TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     EXPECT_EQ(bucket->size, 2);
     EXPECT_EQ(bucket->count, 2);
@@ -222,16 +225,16 @@ TEST_F(BucketTestSuite, TestGet)
     pair_t *pair0 = init_test_pair(key0, 2);
     pair_t *pair1 = init_test_pair(key1, 3);
 
-    bucket_insert(bucket, pair0, sizeof(char), sizeof(int));
-    bucket_insert(bucket, pair1, sizeof(char), sizeof(int));
+    bucket_insert(bucket, pair0, TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    bucket_insert(bucket, pair1, TEST_KEY_SIZE, TEST_VALUE_SIZE);
     
-    EXPECT_EQ(bucket_get(bucket, (void *) &key0, sizeof(char), sizeof(int), (void *) &ret), 0);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key0, TEST_KEY_SIZE, TEST_VALUE_SIZE, (void *) &ret), 0);
     EXPECT_EQ(ret, 2);
 
-    EXPECT_EQ(bucket_get(bucket, (void *) &key1, sizeof(char), sizeof(int), (void *) &ret), 0);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key1, TEST_KEY_SIZE, TEST_VALUE_SIZE, (void *) &ret), 0);
     EXPECT_EQ(ret, 3);
 
-    EXPECT_EQ(bucket_get(bucket, (void *) &invalid_key, sizeof(char), sizeof(int), (void *) &ret), 1);
+    EXPECT_EQ(bucket_get(bucket, (void *) &invalid_key, TEST_KEY_SIZE, TEST_VALUE_SIZE, (void *) &ret), 1);
     EXPECT_EQ(ret, 3);
 
     free_pair(pair0);
@@ -244,10 +247,10 @@ TEST_F(BucketTestSuite, TestInitFreeBucketArray)
     pair_t *pair1 = init_test_pair('e', 2);
     pair_t *pair2 = init_test_pair('l', 3);
 
-    bucket_t *buckets = init_bucket_array(2, sizeof(char), sizeof(int));
-    bucket_insert(&buckets[0], pair0, sizeof(char), sizeof(int));
-    bucket_insert(&buckets[0], pair1, sizeof(char), sizeof(int));
-    bucket_insert(&buckets[1], pair2, sizeof(char), sizeof(int));
+    bucket_t *buckets = init_bucket_array(2, TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    bucket_insert(&buckets[0], pair0, TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    bucket_insert(&buckets[0], pair1, TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    bucket_insert(&buckets[1], pair2, TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     EXPECT_TRUE(expect_pair_is_copy(&buckets[0].pairs_[0], pair0));
     EXPECT_TRUE(expect_pair_is_copy(&buckets[0].pairs_[1], pair1));
@@ -267,7 +270,7 @@ class HashmapTestSuite : public ::testing::Test
 
         void SetUp()
         {
-            hashmap = init_hashmap(sizeof(char), sizeof(int), hash_char);
+            hashmap = init_hashmap(TEST_KEY_SIZE, TEST_VALUE_SIZE, hash_char);
         }
 
         void TearDown()
@@ -280,8 +283,8 @@ TEST_F(HashmapTestSuite, TestInit)
 {
     EXPECT_EQ(hashmap->size_, 8);
     EXPECT_EQ(hashmap->count, 0);
-    EXPECT_EQ(hashmap->key_size, sizeof(char));
-    EXPECT_EQ(hashmap->value_size, sizeof(int));
+    EXPECT_EQ(hashmap->key_size, TEST_KEY_SIZE);
+    EXPECT_EQ(hashmap->value_size, TEST_VALUE_SIZE);
     EXPECT_EQ(hashmap->hashfunc, hash_char);
 }
 
