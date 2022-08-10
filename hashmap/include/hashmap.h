@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: rename data_ to explain more context
 // TODO: remove repetative first_size and second_size storage... move to hashmap
 // TODO: add hashmap deletion
 // TODO: add github workflow for todo and test passing
@@ -32,7 +31,7 @@ typedef struct bucket_t
 {
     size_t size;
     size_t count;
-    pair_t *data_;
+    pair_t *pairs_;
 } bucket_t;
 
 typedef struct hashmap_t
@@ -42,7 +41,7 @@ typedef struct hashmap_t
     size_t key_size;
     size_t value_size;
     hashfunc_t hashfunc;
-    bucket_t *data_;
+    bucket_t *buckets_;
 } hashmap_t;
 
 // pair memory

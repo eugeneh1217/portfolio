@@ -182,7 +182,7 @@ TEST_F(BucketTest, TestInsert)
 
     bucket_insert(bucket, pair0);
 
-    EXPECT_TRUE(expect_pair_is_copy(bucket->data_, pair0));
+    EXPECT_TRUE(expect_pair_is_copy(bucket->pairs_, pair0));
     EXPECT_EQ(bucket->size, 1);
     EXPECT_EQ(bucket->count, 1);
 
@@ -227,15 +227,15 @@ TEST_F(BucketTest, TestInsertMultiple)
     EXPECT_EQ(bucket->size, 2);
     EXPECT_EQ(bucket->count, 2);
 
-    EXPECT_TRUE(expect_pair_is_copy(bucket->data_, pair0));
-    EXPECT_TRUE(expect_pair_is_copy(&bucket->data_[1], pair1));
+    EXPECT_TRUE(expect_pair_is_copy(bucket->pairs_, pair0));
+    EXPECT_TRUE(expect_pair_is_copy(&bucket->pairs_[1], pair1));
     
     bucket_insert(bucket, pair2);
 
     EXPECT_EQ(bucket->size, 2);
     EXPECT_EQ(bucket->count, 2);
 
-    EXPECT_TRUE(expect_pair_is_copy(&bucket->data_[1], pair2));
+    EXPECT_TRUE(expect_pair_is_copy(&bucket->pairs_[1], pair2));
 
     free_pair(pair0);
     free_pair(pair1);
@@ -300,9 +300,9 @@ TEST_F(BucketTest, TestInitFreeBucketArray)
     bucket_insert(&buckets[0], pair1);
     bucket_insert(&buckets[1], pair2);
 
-    EXPECT_TRUE(expect_pair_is_copy(&buckets[0].data_[0], pair0));
-    EXPECT_TRUE(expect_pair_is_copy(&buckets[0].data_[1], pair1));
-    EXPECT_TRUE(expect_pair_is_copy(&buckets[1].data_[0], pair2));
+    EXPECT_TRUE(expect_pair_is_copy(&buckets[0].pairs_[0], pair0));
+    EXPECT_TRUE(expect_pair_is_copy(&buckets[0].pairs_[1], pair1));
+    EXPECT_TRUE(expect_pair_is_copy(&buckets[1].pairs_[0], pair2));
 
     free_bucket_array(buckets, 2);
 
@@ -346,10 +346,10 @@ TEST_F(HashmapTest, TestInsert)
     hashmap_insert(hashmap, (void *) &key0, (void *) &value0);
     hashmap_insert(hashmap, (void *) &key1, (void *) &value1);
     
-    EXPECT_EQ(*(char *) hashmap->data_[0].data_[0].first, key0);
-    EXPECT_EQ(*(int *) hashmap->data_[0].data_[0].second, value0);
-    EXPECT_EQ(*(char *) hashmap->data_[5].data_[0].first, key1);
-    EXPECT_EQ(*(int *) hashmap->data_[5].data_[0].second, value1);
+    EXPECT_EQ(*(char *) hashmap->buckets_[0].pairs_[0].first, key0);
+    EXPECT_EQ(*(int *) hashmap->buckets_[0].pairs_[0].second, value0);
+    EXPECT_EQ(*(char *) hashmap->buckets_[5].pairs_[0].first, key1);
+    EXPECT_EQ(*(int *) hashmap->buckets_[5].pairs_[0].second, value1);
 }
 
 TEST_F(HashmapTest, TestGet)
