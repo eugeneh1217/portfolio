@@ -5,7 +5,6 @@
 #include <string.h>
 
 // TODO: add hashmap load balancing
-// TODO: add hashmap deletion
 // TODO: add github workflow for todo and test passing
 
 typedef enum ERRORS
