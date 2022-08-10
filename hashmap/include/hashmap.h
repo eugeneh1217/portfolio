@@ -72,12 +72,12 @@ void free_bucket_array(bucket_t *buckets, size_t count);
 void bucket_insert(bucket_t *bucket, const pair_t *pair);
 int bucket_get(bucket_t *bucket, const void *key, void *ret);
 
-// hasmap memory
+// hashmap memory
 
 hashmap_t *init_hashmap(size_t key_size, size_t value_size, hashfunc_t hashfunc);
 void free_hashmap(hashmap_t *hashmap);
 
-// hasmap data
+// hashmap data
 
 void hashmap_insert(hashmap_t *hashmap, const void *key, const void *value);
 int hashmap_get(hashmap_t *hashmap, const void *key, void *ret);
