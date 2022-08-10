@@ -270,6 +270,63 @@ TEST_F(BucketTestSuite, TestInitFreeBucketArray)
     free_pair(pair2);
 }
 
+TEST_F(BucketTestSuite, TestDelete)
+{
+    int ret;
+    char key0 = 'h';
+    char key1 = 'e';
+    char key2 = 'l';
+    pair_t *pair0 = init_test_pair(key0, 1);
+    pair_t *pair1 = init_test_pair(key1, 2);
+    pair_t *pair2 = init_test_pair(key2, 3);
+    bucket_insert(bucket, pair0, TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    bucket_insert(bucket, pair1, TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    bucket_insert(bucket, pair2, TEST_KEY_SIZE, TEST_VALUE_SIZE);
+
+    EXPECT_EQ(bucket->size, 4);
+    EXPECT_EQ(bucket->count, 3);
+
+    bucket = bucket_delete(bucket, (void *) &key1,
+                           TEST_KEY_SIZE, TEST_VALUE_SIZE);
+
+    EXPECT_EQ(bucket->size, 2);
+    EXPECT_EQ(bucket->count, 2);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key0, TEST_KEY_SIZE, TEST_VALUE_SIZE,
+                         (void *) &ret), SUCCESS);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key1, TEST_KEY_SIZE, TEST_VALUE_SIZE,
+                         (void *) &ret), KEY_NOT_FOUND_ERR);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key2, TEST_KEY_SIZE, TEST_VALUE_SIZE,
+                         (void *) &ret), SUCCESS);
+
+    bucket = bucket_delete(bucket, (void *) &key2,
+                           TEST_KEY_SIZE, TEST_VALUE_SIZE);
+
+    EXPECT_EQ(bucket->size, 1);
+    EXPECT_EQ(bucket->count, 1);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key0, TEST_KEY_SIZE, TEST_VALUE_SIZE,
+                         (void *) &ret), SUCCESS);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key1, TEST_KEY_SIZE, TEST_VALUE_SIZE,
+                         (void *) &ret), KEY_NOT_FOUND_ERR);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key2, TEST_KEY_SIZE, TEST_VALUE_SIZE,
+                         (void *) &ret), KEY_NOT_FOUND_ERR);
+
+    bucket = bucket_delete(bucket, (void *) &key0,
+                           TEST_KEY_SIZE, TEST_VALUE_SIZE);
+
+    EXPECT_EQ(bucket->size, 1);
+    EXPECT_EQ(bucket->count, 0);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key0, TEST_KEY_SIZE, TEST_VALUE_SIZE,
+                         (void *) &ret), KEY_NOT_FOUND_ERR);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key1, TEST_KEY_SIZE, TEST_VALUE_SIZE,
+                         (void *) &ret), KEY_NOT_FOUND_ERR);
+    EXPECT_EQ(bucket_get(bucket, (void *) &key2, TEST_KEY_SIZE, TEST_VALUE_SIZE,
+                         (void *) &ret), KEY_NOT_FOUND_ERR);
+
+    free_pair(pair0);
+    free_pair(pair1);
+    free_pair(pair2);
+}
+
 class HashmapTestSuite : public ::testing::Test
 {
     public:

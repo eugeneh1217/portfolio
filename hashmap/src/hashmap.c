@@ -148,6 +148,51 @@ int bucket_get(bucket_t *bucket, const void *key,
     return KEY_NOT_FOUND_ERR;
 }
 
+// TODO: int i -> size_t i
+
+bucket_t *bucket_delete(bucket_t *bucket, const void *key,
+                   size_t key_size, size_t value_size)
+{
+    size_t index = 0;
+    int found = 0;
+    for (size_t i = 0; i < bucket->count; ++ i)
+    {
+        if (!memcmp(bucket->pairs_[i].first, key, key_size))
+        {
+            index = i;
+            found = 1;
+            break;
+        }
+    }
+    if (found)
+    {
+        bucket_t *temp = bucket;
+        bucket = (bucket_t *) malloc(sizeof(bucket_t));
+        if (temp->count == temp->size / 2 + 1 && temp->size != 1)
+        {
+            bucket->size = temp->size / 2;
+        }
+        else
+        {
+            bucket->size = temp->size;
+        }
+        bucket->count = temp->count - 1;
+        bucket->pairs_ = init_pair_array(bucket->size, key_size, value_size);
+        for (size_t i = 0; i < index; ++ i)
+        {
+            copy_pair(&bucket->pairs_[i], &temp->pairs_[i],
+                      key_size, value_size);
+        }
+        for (size_t i = index + 1; i < temp->count; ++ i)
+        {
+            copy_pair(&bucket->pairs_[i-1], &temp->pairs_[i],
+                      key_size, value_size);
+        }
+        free_bucket(temp);
+    }
+    return bucket;
+}
+
 // hashmap_t implementation
 
 hashmap_t *init_hashmap(size_t key_size, size_t value_size, hashfunc_t hashfunc)
