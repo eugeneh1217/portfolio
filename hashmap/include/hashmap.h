@@ -69,8 +69,8 @@ void free_bucket_array(bucket_t *buckets, size_t count);
 
 // bucket data
 
-void bucket_insert(bucket_t *bucket, const pair_t *pair);
-int bucket_get(bucket_t *bucket, const void *key, void *ret);
+void bucket_insert(bucket_t *bucket, const pair_t *pair, size_t key_size, size_t value_size);
+int bucket_get(bucket_t *bucket, const void *key, size_t key_size, size_t value_size, void *ret);
 
 // hashmap memory
 
