@@ -32,7 +32,9 @@ typedef struct hashmap_t
 // pair memory management
 pair_t *init_pair(size_t first_size, size_t second_size);
 pair_t *init_pair_values(size_t first_size, size_t second_size, void *first_value, void *second_value);
+pair_t *init_pair_array(size_t count, size_t first_size, size_t second_size);
 void free_pair(pair_t *pair);
+void free_pair_array(pair_t *pair_array, size_t count);
 
 // pair data management
 void pair_insert_first(pair_t *pair, const void *value);

@@ -8,17 +8,25 @@ extern "C"
 
 ::testing::AssertionResult expect_pair_equal(const pair_t a, const pair_t b)
 {
+    EXPECT_EQ(a.first_size, b.first_size);
+    EXPECT_EQ(a.second_size, b.second_size);
     if (
-        a.first_size == b.first_size
-        and a.second_size == b.second_size
-        and !memcmp(a.first, b.first, a.first_size)
+        !memcmp(a.first, b.first, a.first_size)
         and !memcmp(a.second, b.second, a.second_size)
-    )
-    {
+    ) {
         return ::testing::AssertionSuccess();
     }
-    return ::testing::AssertionFailure() << "pairs unequal: " << a.first << " "
-           << a.second << " " << b.first << " " << b.second;
+    return ::testing::AssertionFailure() << "pairs unequal: " << *(char *) a.first << " "
+           << *(int *) a.second << " " << *(char *) b.first << " " << *(int *) b.second;
+}
+
+::testing::AssertionResult expect_pair_is_copy(const pair_t *a, const pair_t *b)
+{
+    EXPECT_TRUE(expect_pair_equal(*a, *b));
+    EXPECT_NE(a, b);
+    EXPECT_NE(a->first, b->first);
+    EXPECT_NE(a->second, b->second);
+    return ::testing::AssertionSuccess();
 }
 
 class HashmapTest : public ::testing::Test
@@ -125,12 +133,26 @@ TEST_F(PairTest, TestCopyPair)
 
     copy_pair(copy, pair);
 
-    EXPECT_TRUE(expect_pair_equal(*copy, *pair));
-    EXPECT_NE(copy, pair);
-    EXPECT_NE(copy->first, pair->first);
-    EXPECT_NE(copy->second, pair->second);
+    EXPECT_TRUE(expect_pair_is_copy(copy, pair));
 
     free_pair(copy);
+}
+
+TEST_F(PairTest, TestInitFreeArray)
+{
+    pair_t *pairs = init_pair_array(2, sizeof(char), sizeof(int));
+    char key0 = 'h';
+    int value0 = 1;
+    char key1 = 'e';
+    int value1 = 2;
+    pair_insert(pairs, (void *) &key0, (void *) &value0);
+    pair_insert(pairs + 1, (void *) &key1, (void *) &value1);
+
+    EXPECT_EQ(*(char *) pairs[0].first, 'h');
+    EXPECT_EQ(*(int *) pairs[0].second, 1);
+    EXPECT_EQ(*(char *) pairs[1].first, 'e');
+    EXPECT_EQ(*(int *) pairs[1].second, 2);
+    free_pair_array(pairs, 2);
 }
 
 class BucketTest : public ::testing::Test
@@ -165,12 +187,65 @@ TEST_F(BucketTest, TestInsert)
         (void *) &key0,
         (void *) &value0
     );
+
     bucket_insert(bucket, pair0);
 
-    expect_pair_equal(*pair0, bucket->data_[0]);
-    EXPECT_NE(pair0, bucket->data_);
-    EXPECT_NE(pair0->first, bucket->data_->first);
-    EXPECT_NE(pair0->second, bucket->data_->second);
+    EXPECT_TRUE(expect_pair_is_copy(bucket->data_, pair0));
+    EXPECT_EQ(bucket->size, 1);
+    EXPECT_EQ(bucket->count, 1);
 
     free_pair(pair0);
+}
+
+TEST_F(BucketTest, TestInsertMultiple)
+{
+    char key0 = 'a';
+    int value0 = 2;
+    char key1 = 'b';
+    int value1 = 3;
+    char key2 = 'b';
+    int value2 = 4;
+    pair_t *pair0 = init_pair_values(
+        sizeof(char),
+        sizeof(int),
+        (void *) &key0,
+        (void *) &value0
+    );
+
+    pair_t *pair1 = init_pair_values(
+        sizeof(char),
+        sizeof(int),
+        (void *) &key1,
+        (void *) &value1
+    );
+
+    pair_t *pair2 = init_pair_values(
+        sizeof(char),
+        sizeof(int),
+        (void *) &key2,
+        (void *) &value2
+    );
+
+    bucket_insert(bucket, pair0);
+
+    EXPECT_EQ(bucket->size, 1);
+    EXPECT_EQ(bucket->count, 1);
+
+    bucket_insert(bucket, pair1);
+    EXPECT_EQ(bucket->size, 2);
+    EXPECT_EQ(bucket->count, 2);
+
+    EXPECT_TRUE(expect_pair_is_copy(bucket->data_, pair0));
+    EXPECT_TRUE(expect_pair_is_copy(&bucket->data_[1], pair1));
+    
+    bucket_insert(bucket, pair2);
+
+    EXPECT_EQ(bucket->size, 2);
+    EXPECT_EQ(bucket->count, 2);
+
+    EXPECT_TRUE(expect_pair_is_copy(&bucket->data_[1], pair2));
+
+    free_pair(pair0);
+    free_pair(pair1);
+    free_pair(pair2);
 }
