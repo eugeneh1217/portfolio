@@ -6,6 +6,8 @@ extern "C"
     #include "hashmap.h"
 }
 
+// TODO: add pair initialization
+
 ::testing::AssertionResult expect_pair_equal(const pair_t a, const pair_t b)
 {
     EXPECT_EQ(a.first_size, b.first_size);
@@ -29,26 +31,16 @@ extern "C"
     return ::testing::AssertionSuccess();
 }
 
-class HashmapTest : public ::testing::Test
+size_t hash_char(const void *key, size_t hashmap_size)
 {
-    public:
-        hashmap_t *hashmap;
+    return (size_t) *(char *) key % hashmap_size;
+}
 
-        void SetUp()
-        {
-            hashmap = init_hashmap();
-        }
-
-        void TearDown()
-        {
-            free_hashmap(hashmap);
-        }
-};
-
-TEST_F(HashmapTest, TestInit)
+TEST(HashCharTest, TestHash)
 {
-    EXPECT_EQ(hashmap->size_, 1);
-    EXPECT_EQ(hashmap->count, 0);
+    char key = 'h'; // 'h' -> 104
+    EXPECT_EQ(hash_char((void *) &key, 4), 0); // 104 % 4 = 0
+    EXPECT_EQ(hash_char((void *) &key, 16), 8); // 104 % 16 = 8
 }
 
 class PairTest : public ::testing::Test
@@ -282,4 +274,99 @@ TEST_F(BucketTest, TestGet)
 
     free_pair(pair0);
     free_pair(pair1);
+}
+
+TEST_F(BucketTest, TestInitFreeBucketArray)
+{
+    char key0 = 'h';
+    int value0 = 1;
+    char key1 = 'e';
+    int value1 = 2;
+    char key2 = 'l';
+    int value2 = 3;
+
+    pair_t *pair0 = init_pair_values(
+        sizeof(char), sizeof(int), (void *) &key0, (void *) &value0
+    );
+    pair_t *pair1 = init_pair_values(
+        sizeof(char), sizeof(int), (void *) &key1, (void *) &value1
+    );
+    pair_t *pair2 = init_pair_values(
+        sizeof(char), sizeof(int), (void *) &key2, (void *) &value2
+    );
+
+    bucket_t *buckets = init_bucket_array(2, sizeof(char), sizeof(int));
+    bucket_insert(&buckets[0], pair0);
+    bucket_insert(&buckets[0], pair1);
+    bucket_insert(&buckets[1], pair2);
+
+    EXPECT_TRUE(expect_pair_is_copy(&buckets[0].data_[0], pair0));
+    EXPECT_TRUE(expect_pair_is_copy(&buckets[0].data_[1], pair1));
+    EXPECT_TRUE(expect_pair_is_copy(&buckets[1].data_[0], pair2));
+
+    free_bucket_array(buckets, 2);
+
+    free_pair(pair0);
+    free_pair(pair1);
+    free_pair(pair2);
+}
+
+class HashmapTest : public ::testing::Test
+{
+    public:
+        hashmap_t *hashmap;
+
+        void SetUp()
+        {
+            hashmap = init_hashmap(sizeof(char), sizeof(int), hash_char);
+        }
+
+        void TearDown()
+        {
+            free_hashmap(hashmap);
+        }
+};
+
+TEST_F(HashmapTest, TestInit)
+{
+    EXPECT_EQ(hashmap->size_, 8);
+    EXPECT_EQ(hashmap->count, 0);
+    EXPECT_EQ(hashmap->key_size, sizeof(char));
+    EXPECT_EQ(hashmap->value_size, sizeof(int));
+    EXPECT_EQ(hashmap->hashfunc, hash_char);
+}
+
+TEST_F(HashmapTest, TestInsert)
+{
+    char key0 = 'h';
+    int value0 = 1;
+    char key1 = 'e';
+    int value1 = 2;
+
+    hashmap_insert(hashmap, (void *) &key0, (void *) &value0);
+    hashmap_insert(hashmap, (void *) &key1, (void *) &value1);
+    
+    EXPECT_EQ(*(char *) hashmap->data_[0].data_[0].first, key0);
+    EXPECT_EQ(*(int *) hashmap->data_[0].data_[0].second, value0);
+    EXPECT_EQ(*(char *) hashmap->data_[5].data_[0].first, key1);
+    EXPECT_EQ(*(int *) hashmap->data_[5].data_[0].second, value1);
+}
+
+TEST_F(HashmapTest, TestGet)
+{
+    int ret;
+    char invalid_key = 'l';
+    char key0 = 'h';
+    int value0 = 1;
+    char key1 = 'e';
+    int value1 = 2;
+    hashmap_insert(hashmap, (void *) &key0, (void *) &value0);
+    hashmap_insert(hashmap, (void *) &key1, (void *) &value1);
+
+    EXPECT_EQ(hashmap_get(hashmap, (void *) &key0, (void *) &ret), 0);
+    EXPECT_EQ(ret, 1);
+    EXPECT_EQ(hashmap_get(hashmap, (void *) &key1, (void *) &ret), 0);
+    EXPECT_EQ(ret, 2);
+    EXPECT_EQ(hashmap_get(hashmap, (void *) &invalid_key, &ret), 1);
+    EXPECT_EQ(ret, 2);
 }
