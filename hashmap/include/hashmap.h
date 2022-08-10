@@ -4,10 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+// TODO: add hashmap deletion
+// TODO: add github workflow for todo and test passing
 typedef enum ERRORS
 {
-    SUCCESS,
-    KEY_NOT_FOUND_ERR
+    SUCCESS=0,
+    KEY_NOT_FOUND_ERR=1
 } ERRORS;
 
 struct pair_t;
