@@ -286,8 +286,8 @@ TEST_F(BucketTestSuite, TestDelete)
     EXPECT_EQ(bucket->size, 4);
     EXPECT_EQ(bucket->count, 3);
 
-    bucket = bucket_delete(bucket, (void *) &key1,
-                           TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    bucket_delete(bucket, (void *) &key1,
+                  TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     EXPECT_EQ(bucket->size, 2);
     EXPECT_EQ(bucket->count, 2);
@@ -298,8 +298,8 @@ TEST_F(BucketTestSuite, TestDelete)
     EXPECT_EQ(bucket_get(bucket, (void *) &key2, TEST_KEY_SIZE, TEST_VALUE_SIZE,
                          (void *) &ret), SUCCESS);
 
-    bucket = bucket_delete(bucket, (void *) &key2,
-                           TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    bucket_delete(bucket, (void *) &key2,
+                  TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     EXPECT_EQ(bucket->size, 1);
     EXPECT_EQ(bucket->count, 1);
@@ -310,8 +310,8 @@ TEST_F(BucketTestSuite, TestDelete)
     EXPECT_EQ(bucket_get(bucket, (void *) &key2, TEST_KEY_SIZE, TEST_VALUE_SIZE,
                          (void *) &ret), KEY_NOT_FOUND_ERR);
 
-    bucket = bucket_delete(bucket, (void *) &key0,
-                           TEST_KEY_SIZE, TEST_VALUE_SIZE);
+    bucket_delete(bucket, (void *) &key0,
+                  TEST_KEY_SIZE, TEST_VALUE_SIZE);
 
     EXPECT_EQ(bucket->size, 1);
     EXPECT_EQ(bucket->count, 0);
@@ -385,4 +385,33 @@ TEST_F(HashmapTestSuite, TestGet)
     EXPECT_EQ(ret, 2);
     EXPECT_EQ(hashmap_get(hashmap, (void *) &invalid_key, &ret), 1);
     EXPECT_EQ(ret, 2);
+}
+
+TEST_F(HashmapTestSuite, TestDelete)
+{
+    int ret;
+    char key0 = 'h';
+    int value0 = 1;
+    char key1 = 'e';
+    int value1 = 2;
+    char key2 = 'l';
+    int value2 = 3;
+    hashmap_insert(hashmap, (void *) &key0, (void *) &value0);
+    hashmap_insert(hashmap, (void *) &key1, (void *) &value1);
+    hashmap_insert(hashmap, (void *) &key2, (void *) &value2);
+
+    hashmap_delete(hashmap, (void *) &key0);
+
+    EXPECT_EQ(hashmap_get(hashmap, (void *) &key0, (void *) &ret),
+              KEY_NOT_FOUND_ERR);
+    
+    hashmap_delete(hashmap, (void *) &key1);
+
+    EXPECT_EQ(hashmap_get(hashmap, (void *) &key1, (void *) &ret),
+              KEY_NOT_FOUND_ERR);
+
+    hashmap_delete(hashmap, (void *) &key2);
+
+    EXPECT_EQ(hashmap_get(hashmap, (void *) &key2, (void *) &ret),
+              KEY_NOT_FOUND_ERR);
 }

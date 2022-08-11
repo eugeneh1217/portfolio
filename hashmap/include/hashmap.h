@@ -74,7 +74,7 @@ void bucket_insert(bucket_t *bucket, const pair_t *pair,
                    size_t key_size, size_t value_size);
 int bucket_get(bucket_t *bucket, const void *key,
                size_t key_size, size_t value_size, void *ret);
-bucket_t *bucket_delete(bucket_t *bucket, const void *key,
+void bucket_delete(bucket_t *bucket, const void *key,
                    size_t key_size, size_t value_size);
 
 // hashmap memory
@@ -87,5 +87,6 @@ void free_hashmap(hashmap_t *hashmap);
 
 void hashmap_insert(hashmap_t *hashmap, const void *key, const void *value);
 int hashmap_get(hashmap_t *hashmap, const void *key, void *ret);
+void hashmap_delete(hashmap_t *hashmap, const void *key);
 
 #endif

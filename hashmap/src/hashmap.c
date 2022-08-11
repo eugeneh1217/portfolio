@@ -148,7 +148,7 @@ int bucket_get(bucket_t *bucket, const void *key,
     return KEY_NOT_FOUND_ERR;
 }
 
-bucket_t *bucket_delete(bucket_t *bucket, const void *key,
+void bucket_delete(bucket_t *bucket, const void *key,
                    size_t key_size, size_t value_size)
 {
     size_t index = 0;
@@ -162,9 +162,9 @@ bucket_t *bucket_delete(bucket_t *bucket, const void *key,
             break;
         }
     }
+    bucket_t *temp = bucket;
     if (found)
     {
-        bucket_t *temp = bucket;
         bucket = (bucket_t *) malloc(sizeof(bucket_t));
         if (temp->count == temp->size / 2 + 1 && temp->size != 1)
         {
@@ -186,9 +186,11 @@ bucket_t *bucket_delete(bucket_t *bucket, const void *key,
             copy_pair(&bucket->pairs_[i-1], &temp->pairs_[i],
                       key_size, value_size);
         }
-        free_bucket(temp);
+        free_pair_array(temp->pairs_, temp->size);
+        memcpy(temp, bucket, sizeof(bucket_t));
+        free(bucket);
     }
-    return bucket;
+    return temp;
 }
 
 // hashmap_t implementation
@@ -231,4 +233,10 @@ int hashmap_get(hashmap_t *hashmap, const void *key, void *ret)
         }
     }
     return KEY_NOT_FOUND_ERR;
+}
+
+void hashmap_delete(hashmap_t *hashmap, const void *key)
+{
+    size_t index = hashmap->hashfunc(key, hashmap->size_);
+    bucket_delete(&hashmap->buckets_[index], key, hashmap->key_size, hashmap->value_size);
 }
