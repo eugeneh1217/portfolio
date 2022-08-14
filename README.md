@@ -6,6 +6,8 @@ This monorepo is Eugene Hong's Engineering Portfolio.
 
 ### Hashmap
 Implementation of hashmap in C.
+This Hashmap implementation is dynamically allocated and supports insertion, deletion, access by key, and load balancing.
+
 
 ### Tooling
 Custom monorepo tooling written in bash and tested with Python's builtin `unittest` module.
