@@ -36,3 +36,13 @@ Without the reallocation, the other allocation got in the way of the growth of t
 
 ## Struct Size in C
 `struct_size` demonstrates memory overhead of storing data in structs. It also demonstrates a technique for storing data without memory overhead by casting and indexing a void pointer.
+
+The overhead of the struct is explained in [this](https://stackoverflow.com/questions/19954818/memory-overhead-for-structs-with-pointers-in-c) stackoverflow post.
+
+This overhead is further explained in [this](https://blog.devgenius.io/c-programming-hacks-01-memory-efficient-struct-design-8e7252c2b986) article as a way to satisfy the requirement that all memory addresses need to be a multiple of the size of the data it holds. For example, ints of size 4 bytes can be stored at memory addresses 4, 8, 12, 16, ... which are multiples of 4, but can't be stored at memory addresses like 2, 6, 9, ... which are not multiples of 4. This article does not explain why this requirement exists.
+
+[This](https://en.wikipedia.org/wiki/Data_structure_alignment) wikipedia article explains that the requirement ensures that all memory for a variable (that is smaller than a word) can be stored and accessed in one memory word. This is called n-byte alignment (smallest measurement of memory is byte here) where n is a power of 2.
+
+[This](https://stackoverflow.com/questions/8752546/how-does-malloc-understand-alignment) stackoverflow post explains that malloc does this alignment with the size that is passed to it.
+
+In conclusion, managing memory with void pointer casts risks multiple cache access to obtain variables smaller than a word. If memory is managed correctly with nice sized variables, this can be avoided. A side-effect of this research is that order of members of a struct matters. Should be from largest to smallest (which is supported by [this](https://jonasdevlieghere.com/order-your-members/#alignmentpadding) article).
