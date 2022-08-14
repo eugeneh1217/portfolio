@@ -6,16 +6,6 @@ This monorepo is Eugene Hong's Engineering Portfolio.
 
 ### Hashmap
 Implementation of hashmap in C.
-This Hashmap implementation is dynamically allocated and supports insertion, deletion, access by key, and load balancing.
-
-How to grow hashmap -> deletion and reinsertion requires a way to differentiate valid pairs and unused pairs.
-- Keeping track of keys on insertion and deletion requires set to remain amortized O(1).
-- Adding a valid flag to pairs violates pair_t name -> pair_t should be renamed.
-- Copying bucket array does not rehash elements of hashmap.
-
-Solution: Keep valid bit in key (extra bit before key memory starts).
-
-
 
 ### Tooling
 Custom monorepo tooling written in bash and tested with Python's builtin `unittest` module.
