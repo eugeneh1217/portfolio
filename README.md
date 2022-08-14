@@ -6,6 +6,8 @@ This monorepo is Eugene Hong's Engineering Portfolio.
 
 ### Hashmap
 Implementation of hashmap in C.
+This Hashmap implementation is dynamically allocated and supports insertion, deletion, access by key, and load balancing.
+
 
 ### Demos
 Project containing explanations and demonstrations of technology features that I struggled to find find satisfactory explanations for online. See project "README.md" for more details.
