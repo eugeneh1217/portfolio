@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #include "hashmap.h"
 
 // pair_t implemetation
@@ -19,7 +21,7 @@ pair_t *init_pair_values(size_t first_size, size_t second_size,
 
 pair_t *init_pair_array(size_t count, size_t first_size, size_t second_size)
 {
-    pair_t *pairs = (pair_t *) malloc(count * sizeof(pair_t));
+    pair_t *pairs = (pair_t *) calloc(count, sizeof(pair_t));
     for (size_t i = 0; i < count; i ++)
     {
         pairs[i].first = malloc(first_size);
@@ -83,7 +85,7 @@ bucket_t *init_bucket(size_t key_size, size_t value_size)
 
 bucket_t *init_bucket_array(size_t count, size_t key_size, size_t value_size)
 {
-    bucket_t *buckets = (bucket_t *) malloc(count * sizeof(bucket_t));
+    bucket_t *buckets = (bucket_t *) calloc(count, sizeof(bucket_t));
     for (size_t i = 0; i < count; ++ i)
     {
         buckets[i].size = 1;
@@ -190,10 +192,15 @@ void bucket_delete(bucket_t *bucket, const void *key,
         memcpy(temp, bucket, sizeof(bucket_t));
         free(bucket);
     }
-    return temp;
 }
 
 // hashmap_t implementation
+
+// typedef struct key_t
+// {
+//     bool valid;
+//     void *data;
+// } key_t;
 
 hashmap_t *init_hashmap(size_t key_size, size_t value_size, hashfunc_t hashfunc)
 {
@@ -203,6 +210,7 @@ hashmap_t *init_hashmap(size_t key_size, size_t value_size, hashfunc_t hashfunc)
     hashmap->key_size = key_size;
     hashmap->value_size = value_size;
     hashmap->hashfunc = hashfunc;
+    // hashmap->buckets_ = init_bucket_array(hashmap->size_, sizeof(key_t), value_size);
     hashmap->buckets_ = init_bucket_array(hashmap->size_, key_size, value_size);
     return hashmap;
 }
@@ -213,30 +221,77 @@ void free_hashmap(hashmap_t *hashmap)
     free(hashmap);
 }
 
+// void copy_bucket(bucket_t *dest, const bucket_t *original,
+//                  size_t key_size, size_t value_size)
+// {
+//     dest->count = original->count;
+//     dest->size = original->size;
+//     for (size_t i = 0; i < original->count; ++ i)
+//     {
+//         copy_pair(&dest->pairs_[i], &original->pairs_[i], key_size, value_size);
+//     }
+// }
+
+// need to distinguish between empty pairs and 0 pairs
+// currently inserting all empty pairs as 0 pairs.
+void grow_hashmap(hashmap_t *hashmap)
+{
+    // bucket_t *temp = hashmap->buckets_;
+    // hashmap->size_ *= 2;
+    // hashmap->buckets_ = init_bucket_array(hashmap->size_, hashmap->key_size, hashmap->value_size);
+    // for (size_t b = 0; b < hashmap->size_ / 2; ++ b)
+    // {
+    //     for (size_t p = 0; p < temp[b].count; ++ p)
+    //     {
+    //         hashmap_insert(hashmap, temp[b].pairs_[p].first, temp[b].pairs_[p].second);
+    //     }
+    // }
+    // free_bucket_array(temp, hashmap->size_ / 2);
+
+    // temp point to bucketarray
+    // hashmap->buckets_ points to new bucket array 2x size
+    // copy buckets from temp to hashmap->buckets_
+    // free temp
+    // update hashmap->size_
+}
+
 void hashmap_insert(hashmap_t *hashmap, const void *key, const void *value)
 {
     size_t index = hashmap->hashfunc(key, hashmap->size_);
+    // key_t insert_key = {.valid = 1, .data = key};
+    // pair_t *pair = init_pair_values(hashmap->key_size, hashmap->value_size,
+    //                                 (void *) &insert_key, value);
     pair_t *pair = init_pair_values(hashmap->key_size, hashmap->value_size,
                                     key, value);
+    hashmap->count -= hashmap->buckets_[index].count;
     bucket_insert(&hashmap->buckets_[index], pair,
                   hashmap->key_size, hashmap->value_size);
+    hashmap->count += hashmap->buckets_[index].count;
+    if (hashmap->count > hashmap->size_ * HASHMAP_MAX_LOAD)
+    {
+        grow_hashmap(hashmap);
+    }
     free_pair(pair);
 }
 
 int hashmap_get(hashmap_t *hashmap, const void *key, void *ret)
 {
-    for (size_t i = 0; i < hashmap->size_; ++ i)
+    size_t index = hashmap->hashfunc(key, hashmap->key_size);
+    // for (size_t i = 0; i < hashmap->size_; ++ i)
+    // {
+    if (!bucket_get(&hashmap->buckets_[index], key, hashmap->key_size, hashmap->value_size, ret))
     {
-        if (!bucket_get(&hashmap->buckets_[i], key, hashmap->key_size, hashmap->value_size, ret))
-        {
-            return SUCCESS;
-        }
+        return SUCCESS;
     }
+    // }
     return KEY_NOT_FOUND_ERR;
 }
 
 void hashmap_delete(hashmap_t *hashmap, const void *key)
 {
     size_t index = hashmap->hashfunc(key, hashmap->size_);
-    bucket_delete(&hashmap->buckets_[index], key, hashmap->key_size, hashmap->value_size);
+    hashmap->count -= hashmap->buckets_[index].count;
+    bucket_delete(&hashmap->buckets_[index], key,
+                  hashmap->key_size, hashmap->value_size);
+    hashmap->count += hashmap->buckets_[index].count;
 }

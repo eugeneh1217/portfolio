@@ -7,6 +7,8 @@
 // TODO: add hashmap load balancing
 // TODO: add github workflow for todo and test passing
 
+#define HASHMAP_MAX_LOAD 0.75
+
 typedef enum ERRORS
 {
     SUCCESS=0,
