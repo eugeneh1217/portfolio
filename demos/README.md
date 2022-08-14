@@ -33,3 +33,6 @@ This happens because dynamic allocations happens on the heap, which is independe
 5. If reallocation occured, code runs to completion printing the assigned values in the array. Otherwise, code fails with segfault.
 
 Without the reallocation, the other allocation got in the way of the growth of the original memory block. Reallocation moved the array data to a memory block large enough for the new data.
+
+## Struct Size in C
+`struct_size` demonstrates memory overhead of storing data in structs. It also demonstrates a technique for storing data without memory overhead by casting and indexing a void pointer.
