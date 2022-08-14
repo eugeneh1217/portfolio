@@ -360,12 +360,14 @@ TEST_F(HashmapTestSuite, TestInsert)
     int value1 = 2;
 
     hashmap_insert(hashmap, (void *) &key0, (void *) &value0);
+    
+    EXPECT_EQ(hashmap->size_, 8);
+    EXPECT_EQ(hashmap->count, 1);
+
     hashmap_insert(hashmap, (void *) &key1, (void *) &value1);
     
-    EXPECT_EQ(*(char *) hashmap->buckets_[0].pairs_[0].first, key0);
-    EXPECT_EQ(*(int *) hashmap->buckets_[0].pairs_[0].second, value0);
-    EXPECT_EQ(*(char *) hashmap->buckets_[5].pairs_[0].first, key1);
-    EXPECT_EQ(*(int *) hashmap->buckets_[5].pairs_[0].second, value1);
+    EXPECT_EQ(hashmap->size_, 8);
+    EXPECT_EQ(hashmap->count, 2);
 }
 
 TEST_F(HashmapTestSuite, TestGet)
@@ -400,18 +402,60 @@ TEST_F(HashmapTestSuite, TestDelete)
     hashmap_insert(hashmap, (void *) &key1, (void *) &value1);
     hashmap_insert(hashmap, (void *) &key2, (void *) &value2);
 
+    EXPECT_EQ(hashmap->size_, 8);
+    EXPECT_EQ(hashmap->count, 3);
+
     hashmap_delete(hashmap, (void *) &key0);
+
+    EXPECT_EQ(hashmap->size_, 8);
+    EXPECT_EQ(hashmap->count, 2);
 
     EXPECT_EQ(hashmap_get(hashmap, (void *) &key0, (void *) &ret),
               KEY_NOT_FOUND_ERR);
-    
+
     hashmap_delete(hashmap, (void *) &key1);
+
+    EXPECT_EQ(hashmap->size_, 8);
+    EXPECT_EQ(hashmap->count, 1);
 
     EXPECT_EQ(hashmap_get(hashmap, (void *) &key1, (void *) &ret),
               KEY_NOT_FOUND_ERR);
 
     hashmap_delete(hashmap, (void *) &key2);
+    EXPECT_EQ(hashmap->size_, 8);
+    EXPECT_EQ(hashmap->count, 0);
 
     EXPECT_EQ(hashmap_get(hashmap, (void *) &key2, (void *) &ret),
               KEY_NOT_FOUND_ERR);
 }
+
+// TEST_F(HashmapTestSuite, TestInsertLoadBalancing)
+// {
+//     int ret;
+//     char key = 'a';
+//     int val = 0;
+//     for (int i = 0; i < 6; ++ i)
+//     {
+//         hashmap_insert(hashmap, (void *) &key, (void *) &val);
+//         ++ key;
+//         ++ val;
+//     }
+
+//     EXPECT_EQ(hashmap->size_, 8);
+//     EXPECT_EQ(hashmap->count, 6);
+
+//     hashmap_insert(hashmap, (void *) &key, (void *) &val);
+
+//     EXPECT_EQ(hashmap->size_, 16);
+//     EXPECT_EQ(hashmap->count, 7);
+
+//     // key = 'a';
+//     // val = 0;
+//     // for (int i = 0; i < 7; ++ i)
+//     // {
+//     //     EXPECT_EQ(hashmap_get(hashmap, &key, &ret), SUCCESS);
+//     //     EXPECT_EQ(ret, val);
+//     //     ++ key;
+//     //     ++ val;
+//     // }
+// }
