@@ -27,6 +27,7 @@ typedef struct hashmap_t
     size_t k_size;
     size_t v_size;
     size_t count;
+    size_t size;
     item_t *items;
 } hashmap_t;
 
