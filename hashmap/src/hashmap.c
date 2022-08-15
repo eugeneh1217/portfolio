@@ -1,5 +1,11 @@
 #include "hashmap.h"
 
+void init_item_args(item_t *item, size_t k_size, size_t v_size)
+{
+    item->k = calloc(1, k_size);
+    item->v = calloc(1, v_size);
+}
+
 hashmap_t *init_hashmap(size_t k_size, size_t v_size)
 {
     hashmap_t *map = (hashmap_t *) malloc(sizeof(hashmap_t));
@@ -10,10 +16,21 @@ hashmap_t *init_hashmap(size_t k_size, size_t v_size)
     map->items = (item_t *) calloc(map->size, sizeof(item_t));
     for (size_t i = 0; i < map->size; ++ i)
     {
-        map->items[i].k = calloc(1, k_size);
-        map->items[i].v = calloc(1, v_size);
+        init_item_args(&map->items[i], k_size, v_size);
     }
     return map;
+}
+
+void free_item_args(item_t *item)
+{
+    free(item->k);
+    free(item->v);
+}
+
+void free_single_item(item_t *item)
+{
+    free_item_args(item);
+    free(item);
 }
 
 void free_item(item_t *item)
@@ -26,20 +43,22 @@ void free_item(item_t *item)
     {
         free_item(item->next);
     }
-    free(item->k);
-    free(item->v);
-    free(item);
+    free_single_item(item);
+}
+
+void free_items(item_t* items, size_t size)
+{
+    for (size_t i = 0; i < size; ++ i)
+    {
+        free_item(items[i].next);
+        free_item_args(&items[i]);
+    }
+    free(items);
 }
 
 void free_hashmap(hashmap_t *map)
 {
-    for (size_t i = 0; i < map->size; ++ i)
-    {
-        free_item(map->items[i].next);
-        free(map->items[i].k);
-        free(map->items[i].v);
-    }
-    free(map->items);
+    free_items(map->items, map->size);
     free(map);
 }
 
@@ -56,8 +75,7 @@ void resize_hashmap(hashmap_t *map, size_t new_size)
 
     for (size_t i = 0; i < new_size; ++ i)
     {
-        map->items[i].k = calloc(1, map->k_size);
-        map->items[i].v = calloc(1, map->v_size);
+        init_item_args(&map->items[i], map->k_size, map->v_size);
     }
 
     item_t *item;
@@ -71,13 +89,7 @@ void resize_hashmap(hashmap_t *map, size_t new_size)
         }
     }
 
-    for (size_t i = 0; i < old_size; ++ i)
-    {
-        free_item(temp[i].next);
-        free(temp[i].k);
-        free(temp[i].v);
-    }
-    free(temp);
+    free_items(temp, old_size);
 }
 
 void hashmap_insert(hashmap_t *map, const void *k, const void *v)
@@ -93,10 +105,8 @@ void hashmap_insert(hashmap_t *map, const void *k, const void *v)
 
     item->next->prev = item;
 
-    item->next->k = malloc(map->k_size);
+    init_item_args(item->next, map->k_size, map->v_size);
     memcpy(item->next->k, k, map->k_size);
-    
-    item->next->v = malloc(map->v_size);
     memcpy(item->next->v, v, map->v_size);
 
     ++map->count;
@@ -135,9 +145,7 @@ void hashmap_delete(hashmap_t *map, const void *k)
                 item->next->prev = item->prev;
             }
             item->prev->next = item->next;
-            free(item->k);
-            free(item->v);
-            free(item);
+            free_single_item(item);
             -- map->count;
             if (map->count < map->size * MIN_LOAD && map->size > 8)
             {
