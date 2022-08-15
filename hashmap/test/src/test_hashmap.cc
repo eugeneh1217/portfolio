@@ -23,6 +23,12 @@ class HashmapTests : public ::testing::Test
         }
 };
 
+TEST_F(HashmapTests, TestInit)
+{
+    EXPECT_EQ(hashmap->count, 0);
+    EXPECT_EQ(hashmap->size, 8);
+}
+
 TEST_F(HashmapTests, TestInsert)
 {
     char key = 'f';
@@ -80,9 +86,33 @@ TEST_F(HashmapTests, TestDelete)
 TEST_F(HashmapTests, TestLoadBalancing)
 {
     char key = 'a';
-    for (int i = 0; i < 7; ++ i)
+    // insert elements before rebalancing
+    for (int i = 0; i < 6; ++ i)
     {
         hashmap_insert(hashmap, (void *) &key, (void *) &i);
         ++key;
+        EXPECT_EQ(hashmap->size, 8);
+        EXPECT_EQ(hashmap->count, i + 1);
+    }
+    // expect rebalance
+    int value = 6;
+    hashmap_insert(hashmap, (void *) &key, (void *) &value);
+    EXPECT_EQ(hashmap->size, 16);
+    EXPECT_EQ(hashmap->count, 7);
+}
+
+TEST_F(HashmapTests, TestBuckets)
+{
+    /**
+     * read buckets to ensure that they are allocated
+     * by jumping on condition that requires bucket reads.
+    */
+    int a = 0;
+    for (int i = 0; i < hashmap->size; ++ i)
+    {
+        if (*(char *) hashmap->items[i].k == ' ')
+        {
+            ++ a;
+        }
     }
 }
