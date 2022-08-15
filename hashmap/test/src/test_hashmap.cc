@@ -45,7 +45,7 @@ TEST_F(HashmapTests, TestInsert)
 {
     char key = 'f';
     int value = 42;
-    hashmap_insert(hashmap, (void *) &key, (void *) &value);
+    hashmap_insert(hashmap,  &key,  &value);
 
     EXPECT_EQ(hashmap->count, 1);
 }
@@ -59,13 +59,13 @@ TEST_F(HashmapTests, TestInsertMultiple)
 
     for (int i = 0; i < ELEMENT_COUNT; ++ i)
     {
-        hashmap_insert(hashmap, (void *) &keys[i], (void *) &values[i]);
+        hashmap_insert(hashmap,  &keys[i],  &values[i]);
         EXPECT_EQ(hashmap->count, i + 1);
     }
 
     for (int i = 0; i < ELEMENT_COUNT; ++ i)
     {
-        EXPECT_EQ(hashmap_get(hashmap, (void *) &keys[i], (void *) &ret), 0);
+        EXPECT_EQ(hashmap_get(hashmap,  &keys[i],  &ret), 0);
         EXPECT_EQ(ret, values[i]);
     }
 
@@ -77,12 +77,12 @@ TEST_F(HashmapTests, TestGet)
     char invalid_key = 'o';
     char key = 'f';
     int value = 42;
-    hashmap_insert(hashmap, (void *) &key, (void *) &value);
+    hashmap_insert(hashmap,  &key,  &value);
 
-    EXPECT_EQ(hashmap_get(hashmap, (void *) &key, (void *) &ret), 0);
+    EXPECT_EQ(hashmap_get(hashmap,  &key,  &ret), 0);
     EXPECT_EQ(ret, 42);
 
-    EXPECT_EQ(hashmap_get(hashmap, (void *) &invalid_key, (void *) &ret), 1);
+    EXPECT_EQ(hashmap_get(hashmap,  &invalid_key,  &ret), 1);
     EXPECT_EQ(ret, 42);
 }
 
@@ -91,9 +91,9 @@ TEST_F(HashmapTests, TestDelete)
     int ret;
     char key = 'f';
     int value = 42;
-    hashmap_insert(hashmap, (void *) &key, (void *) &value);
+    hashmap_insert(hashmap,  &key,  &value);
 
-    hashmap_delete(hashmap, (void *) &key);
+    hashmap_delete(hashmap,  &key);
     EXPECT_EQ(hashmap_get(hashmap, &key, &ret), 1);
     EXPECT_EQ(hashmap->count, 0);
 }
@@ -124,20 +124,20 @@ TEST_F(HashmapTests, TestLoadBalancingGrow)
     // insert elements before rebalancing
     for (int i = 0; i < 6; ++ i)
     {
-        hashmap_insert(hashmap, (void *) &key, (void *) &i);
+        hashmap_insert(hashmap,  &key,  &i);
         ++key;
         EXPECT_EQ(hashmap->size, 8);
         EXPECT_EQ(hashmap->count, i + 1);
     }
     // expect rebalance
     int value = 6;
-    hashmap_insert(hashmap, (void *) &key, (void *) &value);
+    hashmap_insert(hashmap,  &key,  &value);
     EXPECT_EQ(hashmap->size, 16);
     EXPECT_EQ(hashmap->count, 7);
     key = 'a';
     for (int i = 0; i < 7; ++ i)
     {
-        EXPECT_EQ(hashmap_get(hashmap, (void *) &key, &ret), 0);
+        EXPECT_EQ(hashmap_get(hashmap,  &key, &ret), 0);
         ++key;
         EXPECT_EQ(ret, i);
     }
@@ -149,7 +149,7 @@ TEST_F(HashmapTests, TestLoadBalancingShrink)
     char key = 'a';
     for (int i = 0; i < 7; ++ i)
     {
-        hashmap_insert(hashmap, (void *) &key, (void *) &i);
+        hashmap_insert(hashmap,  &key,  &i);
         ++ key;
         EXPECT_EQ(hashmap->count, i + 1);
     }
@@ -227,7 +227,7 @@ TEST_F(HashmapTests, TestHashing)
     char key = 'a';
     for (int i = 0; i < 6; ++ i)
     {
-        hashmap_insert(hashmap, (void *) &key, (void *) &i);
+        hashmap_insert(hashmap,  &key,  &i);
         EXPECT_EQ(get_bucket_with(hashmap, key), (1 + i) % hashmap->size);
         ++key;
     }
