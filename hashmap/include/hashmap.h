@@ -44,5 +44,4 @@ void hashmap_insert(hashmap_t *, const void *, const void *);
 STATUS_T hashmap_get(hashmap_t *, const void *, void *);
 void hashmap_delete(hashmap_t *, const void *);
 
-
 #endif
