@@ -95,6 +95,7 @@ TEST_F(HashmapTests, TestDelete)
 
     hashmap_delete(hashmap, (void *) &key);
     EXPECT_EQ(hashmap_get(hashmap, &key, &ret), 1);
+    EXPECT_EQ(hashmap->count, 0);
 }
 
 TEST_F(HashmapTests, TestDeleteSameHash)
@@ -116,7 +117,7 @@ TEST_F(HashmapTests, TestDeleteSameHash)
     EXPECT_EQ(hashmap_get(hashmap, &k2, &ret), 0);
 }
 
-TEST_F(HashmapTests, TestLoadBalancing)
+TEST_F(HashmapTests, TestLoadBalancingGrow)
 {
     int ret;
     char key = 'a';
@@ -139,6 +140,44 @@ TEST_F(HashmapTests, TestLoadBalancing)
         EXPECT_EQ(hashmap_get(hashmap, (void *) &key, &ret), 0);
         ++key;
         EXPECT_EQ(ret, i);
+    }
+}
+
+TEST_F(HashmapTests, TestLoadBalancingShrink)
+{
+    int ret;
+    char key = 'a';
+    for (int i = 0; i < 7; ++ i)
+    {
+        hashmap_insert(hashmap, (void *) &key, (void *) &i);
+        ++ key;
+        EXPECT_EQ(hashmap->count, i + 1);
+    }
+    key = 'a';
+    // delete before shrink
+    for (int i = 0; i < 3; ++ i)
+    {
+        hashmap_delete(hashmap, &key);
+        ++ key;
+        EXPECT_EQ(hashmap->size, 16);
+        EXPECT_EQ(hashmap->count, 7 - i - 1);
+    }
+
+    // delete after shrink
+    hashmap_delete(hashmap, &key);
+    EXPECT_EQ(hashmap->size, 8);
+
+    key = 'a';
+    for (int i = 0; i < 4; ++ i)
+    {
+        EXPECT_EQ(hashmap_get(hashmap, &key, &ret), 1);
+        ++ key;
+    }
+    for (int i = 4; i < 7; ++ i)
+    {
+        printf("%c\n", key);
+        EXPECT_EQ(hashmap_get(hashmap, &key, &ret), 0);
+        ++ key;
     }
 }
 
