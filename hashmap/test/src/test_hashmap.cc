@@ -88,11 +88,32 @@ TEST_F(HashmapTests, TestGet)
 
 TEST_F(HashmapTests, TestDelete)
 {
+    int ret;
     char key = 'f';
     int value = 42;
     hashmap_insert(hashmap, (void *) &key, (void *) &value);
 
     hashmap_delete(hashmap, (void *) &key);
+    EXPECT_EQ(hashmap_get(hashmap, &key, &ret), 1);
+}
+
+TEST_F(HashmapTests, TestDeleteSameHash)
+{
+    int ret;
+    char k0 = 'P'; // ascii 80
+    char v0 = 42;
+    char k1 = 'X'; // ascii 88
+    char v1 = 24;
+    char k2 = '`'; // ascii 96
+    char v2 = 1;
+    hashmap_insert(hashmap, &k0, &v0);
+    hashmap_insert(hashmap, &k1, &v1);
+    hashmap_insert(hashmap, &k2, &v2);
+
+    hashmap_delete(hashmap, &k1);
+
+    EXPECT_EQ(hashmap_get(hashmap, &k0, &ret), 0);
+    EXPECT_EQ(hashmap_get(hashmap, &k2, &ret), 0);
 }
 
 TEST_F(HashmapTests, TestLoadBalancing)

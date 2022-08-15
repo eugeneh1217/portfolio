@@ -1,7 +1,5 @@
 #include "hashmap.h"
 
-#include <stdio.h>
-
 hashmap_t *init_hashmap(size_t k_size, size_t v_size)
 {
     hashmap_t *map = (hashmap_t *) malloc(sizeof(hashmap_t));
@@ -119,5 +117,22 @@ STATUS_T hashmap_get(hashmap_t *map, const void *k, void *ret)
 
 void hashmap_delete(hashmap_t *map, const void *k)
 {
-
+    size_t bucket_index = map->hash(k, map->size);
+    item_t *item = map->items[bucket_index].next;
+    while(item != NULL)
+    {
+        if (!memcmp(item->k, k, map->k_size))
+        {
+            if (item->next != NULL)
+            {
+                item->next->prev = item->prev;
+            }
+            item->prev->next = item->next;
+            free(item->k);
+            free(item->v);
+            free(item);
+            return;
+        }
+        item = item->next;
+    }
 }
