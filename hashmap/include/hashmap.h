@@ -6,6 +6,8 @@
 
 // TODO: add github workflow for todo and test passing
 
+typedef size_t (*hash_function_t)(const void *, size_t);
+
 typedef enum STATUS_T
 {
     SUCCESS=0,
@@ -28,6 +30,7 @@ typedef struct hashmap_t
     size_t v_size;
     size_t count;
     size_t size;
+    hash_function_t hash;
     item_t *items;
 } hashmap_t;
 

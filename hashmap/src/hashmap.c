@@ -47,7 +47,8 @@ void free_hashmap(hashmap_t *map)
 
 void hashmap_insert(hashmap_t *map, const void *k, const void *v)
 {
-    item_t *item = map->items;
+    size_t bucket_index = map->hash(k, map->size);
+    item_t *item = &map->items[bucket_index];
     while (item->next != NULL)
     {
         item = item->next;
@@ -102,7 +103,8 @@ void hashmap_insert(hashmap_t *map, const void *k, const void *v)
 
 STATUS_T hashmap_get(hashmap_t *map, const void *k, void *ret)
 {
-    item_t *item = map->items;
+    size_t bucket_index = map->hash(k, map->size);
+    item_t *item = &map->items[bucket_index];
     while (item != NULL)
     {
         if (!memcmp(item->k, k, map->k_size))
