@@ -85,6 +85,7 @@ TEST_F(HashmapTests, TestDelete)
 
 TEST_F(HashmapTests, TestLoadBalancing)
 {
+    int ret;
     char key = 'a';
     // insert elements before rebalancing
     for (int i = 0; i < 6; ++ i)
@@ -99,6 +100,13 @@ TEST_F(HashmapTests, TestLoadBalancing)
     hashmap_insert(hashmap, (void *) &key, (void *) &value);
     EXPECT_EQ(hashmap->size, 16);
     EXPECT_EQ(hashmap->count, 7);
+    key = 'a';
+    for (int i = 0; i < 7; ++ i)
+    {
+        EXPECT_EQ(hashmap_get(hashmap, (void *) &key, &ret), 0);
+        ++key;
+        EXPECT_EQ(ret, i);
+    }
 }
 
 TEST_F(HashmapTests, TestBuckets)
