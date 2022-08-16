@@ -6,13 +6,14 @@ void init_item_args(item_t *item, size_t k_size, size_t v_size)
     item->v = calloc(1, v_size);
 }
 
-hashmap_t *init_hashmap(size_t k_size, size_t v_size)
+hashmap_t *init_hashmap(size_t k_size, size_t v_size, hash_function_t hash)
 {
     hashmap_t *map = (hashmap_t *) malloc(sizeof(hashmap_t));
     map->k_size = k_size;
     map->v_size = v_size;
     map->count = 0;
     map->size = 8;
+    map->hash = hash;
     map->items = (item_t *) calloc(map->size, sizeof(item_t));
     for (size_t i = 0; i < map->size; ++ i)
     {

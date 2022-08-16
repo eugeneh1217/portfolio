@@ -37,7 +37,7 @@ typedef struct hashmap_t
     item_t *items;
 } hashmap_t;
 
-hashmap_t *init_hashmap(size_t, size_t);
+hashmap_t *init_hashmap(size_t, size_t, hash_function_t);
 void free_hashmap(hashmap_t *);
 
 void hashmap_insert(hashmap_t *, const void *, const void *);

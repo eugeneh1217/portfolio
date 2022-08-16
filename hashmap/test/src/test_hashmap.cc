@@ -25,8 +25,7 @@ class HashmapTests : public ::testing::Test
 
         void SetUp()
         {
-            hashmap = init_hashmap(TEST_KEY_SIZE, TEST_VALUE_SIZE);
-            hashmap->hash = hash_char;
+            hashmap = init_hashmap(TEST_KEY_SIZE, TEST_VALUE_SIZE, hash_char);
         }
 
         void TearDown()
@@ -39,6 +38,7 @@ TEST_F(HashmapTests, TestInit)
 {
     EXPECT_EQ(hashmap->count, 0);
     EXPECT_EQ(hashmap->size, 8);
+    EXPECT_EQ(hashmap->hash, hash_char);
 }
 
 TEST_F(HashmapTests, TestInsert)
@@ -175,7 +175,6 @@ TEST_F(HashmapTests, TestLoadBalancingShrink)
     }
     for (int i = 4; i < 7; ++ i)
     {
-        printf("%c\n", key);
         EXPECT_EQ(hashmap_get(hashmap, &key, &ret), 0);
         ++ key;
     }
