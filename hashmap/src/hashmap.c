@@ -6,6 +6,16 @@ void init_item_args(item_t *item, size_t k_size, size_t v_size)
     item->v = calloc(1, v_size);
 }
 
+void init_items(hashmap_t *map, size_t size)
+{
+    map->items = (item_t *) calloc(map->size, sizeof(item_t));
+
+    for (size_t i = 0; i < size; ++ i)
+    {
+        init_item_args(&map->items[i], map->k_size, map->v_size);
+    }
+}
+
 hashmap_t *init_hashmap(size_t k_size, size_t v_size, hash_function_t hash)
 {
     hashmap_t *map = (hashmap_t *) malloc(sizeof(hashmap_t));
@@ -14,11 +24,7 @@ hashmap_t *init_hashmap(size_t k_size, size_t v_size, hash_function_t hash)
     map->count = 0;
     map->size = HASHMAP_INIT_SIZE;
     map->hash = hash;
-    map->items = (item_t *) calloc(map->size, sizeof(item_t));
-    for (size_t i = 0; i < map->size; ++ i)
-    {
-        init_item_args(&map->items[i], k_size, v_size);
-    }
+    init_items(map, map->size);
     return map;
 }
 
@@ -72,12 +78,7 @@ void resize_hashmap(hashmap_t *map, size_t new_size)
 
     map->count = 0;
 
-    map->items = (item_t *) calloc(map->size, sizeof(item_t));
-
-    for (size_t i = 0; i < new_size; ++ i)
-    {
-        init_item_args(&map->items[i], map->k_size, map->v_size);
-    }
+    init_items(map, new_size);
 
     item_t *item;
     for (size_t b = 0; b < old_size; ++ b)
@@ -161,12 +162,7 @@ void hashmap_delete(hashmap_t *map, const void *k)
 void hashmap_clear(hashmap_t *map)
 {
     free_items(map->items, map->size);
-    map->items = (item_t *) calloc(HASHMAP_INIT_SIZE, sizeof(item_t));
-
-    for (size_t i = 0; i < HASHMAP_INIT_SIZE; ++ i)
-    {
-        init_item_args(&map->items[i], map->k_size, map->v_size);
-    }
+    init_items(map, HASHMAP_INIT_SIZE);
     map->size = HASHMAP_INIT_SIZE;
     map->count = 0;
 }
