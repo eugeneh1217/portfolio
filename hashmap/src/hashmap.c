@@ -19,12 +19,14 @@ void init_items(hashmap_t *map, size_t size)
 hashmap_t *init_hashmap(size_t k_size, size_t v_size, hash_function_t hash)
 {
     hashmap_t *map = (hashmap_t *) malloc(sizeof(hashmap_t));
+
     map->k_size = k_size;
     map->v_size = v_size;
     map->count = 0;
     map->size = HASHMAP_INIT_SIZE;
     map->hash = hash;
     init_items(map, map->size);
+
     return map;
 }
 
@@ -76,7 +78,6 @@ void resize_hashmap(hashmap_t *map, size_t new_size)
     size_t old_size = map->size;
 
     map->size = new_size;
-
     map->count = 0;
 
     init_items(map, new_size);
@@ -84,9 +85,11 @@ void resize_hashmap(hashmap_t *map, size_t new_size)
     for (size_t b = 0; b < old_size; ++ b)
     {
         item = temp[b].next;
+
         while (item != NULL)
         {
             hashmap_insert(map, item->k, item->v);
+
             item = item->next;
         }
     }
@@ -98,13 +101,13 @@ void hashmap_insert(hashmap_t *map, const void *k, const void *v)
 {
     size_t bucket_index = map->hash(k, map->size);
     item_t *item = &map->items[bucket_index];
+
     while (item->next != NULL)
     {
         item = item->next;
     }
 
     item->next = (item_t *) calloc(1, sizeof(item_t));
-
     item->next->prev = item;
 
     init_item_args(item->next, map->k_size, map->v_size);
@@ -112,6 +115,7 @@ void hashmap_insert(hashmap_t *map, const void *k, const void *v)
     memcpy(item->next->v, v, map->v_size);
 
     ++map->count;
+
     if (map->count > map->size * MAX_LOAD)
     {
         resize_hashmap(map, map->size * 2);
@@ -122,6 +126,7 @@ STATUS_T hashmap_get(hashmap_t *map, const void *k, void *ret)
 {
     size_t bucket_index = map->hash(k, map->size);
     item_t *item = &map->items[bucket_index];
+
     while (item != NULL)
     {
         if (!memcmp(item->k, k, map->k_size))
@@ -129,8 +134,10 @@ STATUS_T hashmap_get(hashmap_t *map, const void *k, void *ret)
             memcpy(ret, item->v, map->v_size);
             return SUCCESS;
         }
+
         item = item->next;
     }
+
     return KEY_NOT_FOUND_ERR;
 }
 
@@ -138,6 +145,7 @@ void hashmap_delete(hashmap_t *map, const void *k)
 {
     size_t bucket_index = map->hash(k, map->size);
     item_t *item = map->items[bucket_index].next;
+
     while(item != NULL)
     {
         if (!memcmp(item->k, k, map->k_size))
@@ -146,15 +154,21 @@ void hashmap_delete(hashmap_t *map, const void *k)
             {
                 item->next->prev = item->prev;
             }
+
             item->prev->next = item->next;
+
             free_single_item(item);
+
             -- map->count;
+
             if (map->count < map->size * MIN_LOAD && map->size > HASHMAP_INIT_SIZE)
             {
                 resize_hashmap(map, map->size / 2.);
             }
+
             return;
         }
+
         item = item->next;
     }
 }
