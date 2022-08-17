@@ -231,3 +231,20 @@ TEST_F(HashmapTests, TestHashing)
         ++key;
     }
 }
+
+TEST_F(HashmapTests, TestClear)
+{
+    int ret;
+    char keys[11] = {'h', 'e', 'l',  'l', '0', ' ', 'w', 'o', 'r', 'l', 'd'};
+    int values[11] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+    for (int i = 0; i < 11; ++ i)
+    {
+        hashmap_insert(hashmap, &keys[i], &values[i]);
+    }
+    hashmap_clear(hashmap);
+    EXPECT_EQ(hashmap->count, 0);
+    for (int i = 0; i < 11; ++ i)
+    {
+        EXPECT_EQ(hashmap_get(hashmap, &keys[i], &ret), 1);
+    }
+}
