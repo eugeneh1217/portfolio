@@ -43,5 +43,6 @@ void free_hashmap(hashmap_t *);
 void hashmap_insert(hashmap_t *, const void *, const void *);
 STATUS_T hashmap_get(hashmap_t *, const void *, void *);
 void hashmap_delete(hashmap_t *, const void *);
+void hashmap_clear(hashmap_t *);
 
 #endif

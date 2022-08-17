@@ -157,3 +157,16 @@ void hashmap_delete(hashmap_t *map, const void *k)
         item = item->next;
     }
 }
+
+void hashmap_clear(hashmap_t *map)
+{
+    free_items(map->items, map->size);
+    map->items = (item_t *) calloc(8, sizeof(item_t));
+
+    for (size_t i = 0; i < 8; ++ i)
+    {
+        init_item_args(&map->items[i], map->k_size, map->v_size);
+    }
+    map->size = 8;
+    map->count = 0;
+}
