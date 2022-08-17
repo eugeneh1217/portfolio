@@ -82,7 +82,7 @@ TEST_F(HashmapTests, TestGet)
     EXPECT_EQ(hashmap_get(hashmap,  &key,  &ret), 0);
     EXPECT_EQ(ret, 42);
 
-    EXPECT_EQ(hashmap_get(hashmap,  &invalid_key,  &ret), 1);
+    EXPECT_EQ(hashmap_get(hashmap,  &invalid_key,  &ret), KEY_NOT_FOUND);
     EXPECT_EQ(ret, 42);
 }
 
@@ -94,7 +94,7 @@ TEST_F(HashmapTests, TestDelete)
     hashmap_insert(hashmap,  &key,  &value);
 
     hashmap_delete(hashmap,  &key);
-    EXPECT_EQ(hashmap_get(hashmap, &key, &ret), 1);
+    EXPECT_EQ(hashmap_get(hashmap, &key, &ret), KEY_NOT_FOUND);
     EXPECT_EQ(hashmap->count, 0);
 }
 
@@ -170,7 +170,7 @@ TEST_F(HashmapTests, TestLoadBalancingShrink)
     key = 'a';
     for (int i = 0; i < 4; ++ i)
     {
-        EXPECT_EQ(hashmap_get(hashmap, &key, &ret), 1);
+        EXPECT_EQ(hashmap_get(hashmap, &key, &ret), KEY_NOT_FOUND);
         ++ key;
     }
     for (int i = 4; i < 7; ++ i)
@@ -245,6 +245,6 @@ TEST_F(HashmapTests, TestClear)
     EXPECT_EQ(hashmap->count, 0);
     for (int i = 0; i < 11; ++ i)
     {
-        EXPECT_EQ(hashmap_get(hashmap, &keys[i], &ret), 1);
+        EXPECT_EQ(hashmap_get(hashmap, &keys[i], &ret), KEY_NOT_FOUND);
     }
 }
