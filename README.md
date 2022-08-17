@@ -4,6 +4,13 @@ This monorepo is Eugene Hong's Engineering Portfolio.
 
 ## Projects
 
+### Hashmap
+Implementation of hashmap in C supporting insertion access by key, deletion,
+clearing all elements, and load balancing.
+
+Demo displays that insertion , access by key, and deletion are O(1) time complexity.
+
+
 ### Demos
 Project containing explanations and demonstrations of technology features that I struggled to find find satisfactory explanations for online. See project "README.md" for more details.
 
@@ -17,6 +24,25 @@ Currently, tooling contains a `new_project.sh` script. This script supports proj
 Tooling scripts should be called from repository root directory.
 
 ## Testing
+
+### C/C++
+Both C and C++ projects are tested with the [Gtest](https://github.com/google/googletest) testing framework.
+Memory leaks are detected with [Valgrind](https://valgrind.org/).
+
+Valgrind can be installed with apt
+```bash
+sudo apt install valgrind
+```
+
+Tests can be run after they are compiled and linked by running the executable with valgrind.
+```bash
+valgrind ./<executable>
+```
+
+For example, if the test executable is called `tests`, they can be executed with Valgrind with
+```bash
+valgrind ./tests
+```
 
 ### Python
 Python tests can be run from root with
