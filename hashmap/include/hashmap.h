@@ -13,7 +13,7 @@ typedef size_t (*hash_function_t)(const void *, size_t);
 typedef enum STATUS_T
 {
     SUCCESS=0,
-    KEY_NOT_FOUND=1
+    KEY_NOT_FOUND_ERR=1
 } STATUS_T;
 
 typedef struct item_t item_t;

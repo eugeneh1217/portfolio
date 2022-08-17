@@ -131,7 +131,7 @@ STATUS_T hashmap_get(hashmap_t *map, const void *k, void *ret)
         }
         item = item->next;
     }
-    return KEY_NOT_FOUND;
+    return KEY_NOT_FOUND_ERR;
 }
 
 void hashmap_delete(hashmap_t *map, const void *k)

@@ -65,7 +65,7 @@ TEST_F(HashmapTests, TestInsertMultiple)
 
     for (int i = 0; i < ELEMENT_COUNT; ++ i)
     {
-        EXPECT_EQ(hashmap_get(hashmap,  &keys[i],  &ret), 0);
+        EXPECT_EQ(hashmap_get(hashmap,  &keys[i],  &ret), SUCCESS);
         EXPECT_EQ(ret, values[i]);
     }
 
@@ -79,10 +79,10 @@ TEST_F(HashmapTests, TestGet)
     int value = 42;
     hashmap_insert(hashmap,  &key,  &value);
 
-    EXPECT_EQ(hashmap_get(hashmap,  &key,  &ret), 0);
+    EXPECT_EQ(hashmap_get(hashmap,  &key,  &ret), SUCCESS);
     EXPECT_EQ(ret, 42);
 
-    EXPECT_EQ(hashmap_get(hashmap,  &invalid_key,  &ret), KEY_NOT_FOUND);
+    EXPECT_EQ(hashmap_get(hashmap,  &invalid_key,  &ret), KEY_NOT_FOUND_ERR);
     EXPECT_EQ(ret, 42);
 }
 
@@ -94,7 +94,7 @@ TEST_F(HashmapTests, TestDelete)
     hashmap_insert(hashmap,  &key,  &value);
 
     hashmap_delete(hashmap,  &key);
-    EXPECT_EQ(hashmap_get(hashmap, &key, &ret), KEY_NOT_FOUND);
+    EXPECT_EQ(hashmap_get(hashmap, &key, &ret), KEY_NOT_FOUND_ERR);
     EXPECT_EQ(hashmap->count, 0);
 }
 
@@ -113,8 +113,8 @@ TEST_F(HashmapTests, TestDeleteSameHash)
 
     hashmap_delete(hashmap, &k1);
 
-    EXPECT_EQ(hashmap_get(hashmap, &k0, &ret), 0);
-    EXPECT_EQ(hashmap_get(hashmap, &k2, &ret), 0);
+    EXPECT_EQ(hashmap_get(hashmap, &k0, &ret), SUCCESS);
+    EXPECT_EQ(hashmap_get(hashmap, &k2, &ret), SUCCESS);
 }
 
 TEST_F(HashmapTests, TestLoadBalancingGrow)
@@ -137,7 +137,7 @@ TEST_F(HashmapTests, TestLoadBalancingGrow)
     key = 'a';
     for (int i = 0; i < 7; ++ i)
     {
-        EXPECT_EQ(hashmap_get(hashmap,  &key, &ret), 0);
+        EXPECT_EQ(hashmap_get(hashmap,  &key, &ret), SUCCESS);
         ++key;
         EXPECT_EQ(ret, i);
     }
@@ -170,12 +170,12 @@ TEST_F(HashmapTests, TestLoadBalancingShrink)
     key = 'a';
     for (int i = 0; i < 4; ++ i)
     {
-        EXPECT_EQ(hashmap_get(hashmap, &key, &ret), KEY_NOT_FOUND);
+        EXPECT_EQ(hashmap_get(hashmap, &key, &ret), KEY_NOT_FOUND_ERR);
         ++ key;
     }
     for (int i = 4; i < 7; ++ i)
     {
-        EXPECT_EQ(hashmap_get(hashmap, &key, &ret), 0);
+        EXPECT_EQ(hashmap_get(hashmap, &key, &ret), SUCCESS);
         ++ key;
     }
 }
@@ -245,6 +245,6 @@ TEST_F(HashmapTests, TestClear)
     EXPECT_EQ(hashmap->count, 0);
     for (int i = 0; i < 11; ++ i)
     {
-        EXPECT_EQ(hashmap_get(hashmap, &keys[i], &ret), KEY_NOT_FOUND);
+        EXPECT_EQ(hashmap_get(hashmap, &keys[i], &ret), KEY_NOT_FOUND_ERR);
     }
 }
