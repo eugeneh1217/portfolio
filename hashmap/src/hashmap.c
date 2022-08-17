@@ -71,16 +71,16 @@ void free_hashmap(hashmap_t *map)
 
 void resize_hashmap(hashmap_t *map, size_t new_size)
 {
+    item_t *item;
     item_t *temp = map->items;
-
     size_t old_size = map->size;
+
     map->size = new_size;
 
     map->count = 0;
 
     init_items(map, new_size);
 
-    item_t *item;
     for (size_t b = 0; b < old_size; ++ b)
     {
         item = temp[b].next;
