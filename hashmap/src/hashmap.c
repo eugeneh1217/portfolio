@@ -12,7 +12,7 @@ hashmap_t *init_hashmap(size_t k_size, size_t v_size, hash_function_t hash)
     map->k_size = k_size;
     map->v_size = v_size;
     map->count = 0;
-    map->size = 8;
+    map->size = HASHMAP_INIT_SIZE;
     map->hash = hash;
     map->items = (item_t *) calloc(map->size, sizeof(item_t));
     for (size_t i = 0; i < map->size; ++ i)
@@ -148,7 +148,7 @@ void hashmap_delete(hashmap_t *map, const void *k)
             item->prev->next = item->next;
             free_single_item(item);
             -- map->count;
-            if (map->count < map->size * MIN_LOAD && map->size > 8)
+            if (map->count < map->size * MIN_LOAD && map->size > HASHMAP_INIT_SIZE)
             {
                 resize_hashmap(map, map->size / 2.);
             }
@@ -161,12 +161,12 @@ void hashmap_delete(hashmap_t *map, const void *k)
 void hashmap_clear(hashmap_t *map)
 {
     free_items(map->items, map->size);
-    map->items = (item_t *) calloc(8, sizeof(item_t));
+    map->items = (item_t *) calloc(HASHMAP_INIT_SIZE, sizeof(item_t));
 
-    for (size_t i = 0; i < 8; ++ i)
+    for (size_t i = 0; i < HASHMAP_INIT_SIZE; ++ i)
     {
         init_item_args(&map->items[i], map->k_size, map->v_size);
     }
-    map->size = 8;
+    map->size = HASHMAP_INIT_SIZE;
     map->count = 0;
 }

@@ -37,7 +37,7 @@ class HashmapTests : public ::testing::Test
 TEST_F(HashmapTests, TestInit)
 {
     EXPECT_EQ(hashmap->count, 0);
-    EXPECT_EQ(hashmap->size, 8);
+    EXPECT_EQ(hashmap->size, HASHMAP_INIT_SIZE);
     EXPECT_EQ(hashmap->hash, hash_char);
 }
 
@@ -126,7 +126,7 @@ TEST_F(HashmapTests, TestLoadBalancingGrow)
     {
         hashmap_insert(hashmap,  &key,  &i);
         ++key;
-        EXPECT_EQ(hashmap->size, 8);
+        EXPECT_EQ(hashmap->size, HASHMAP_INIT_SIZE);
         EXPECT_EQ(hashmap->count, i + 1);
     }
     // expect rebalance
@@ -165,7 +165,7 @@ TEST_F(HashmapTests, TestLoadBalancingShrink)
 
     // delete after shrink
     hashmap_delete(hashmap, &key);
-    EXPECT_EQ(hashmap->size, 8);
+    EXPECT_EQ(hashmap->size, HASHMAP_INIT_SIZE);
 
     key = 'a';
     for (int i = 0; i < 4; ++ i)
