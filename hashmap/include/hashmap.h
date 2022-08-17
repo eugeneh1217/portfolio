@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: add github workflow for todo and test passing
-
 #define MAX_LOAD 0.8
 #define MIN_LOAD 0.2
 
