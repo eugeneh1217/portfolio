@@ -18,10 +18,10 @@ Project containing explanations and demonstrations of technology features that I
 Custom monorepo tooling written in bash and tested with Python's builtin `unittest` module.
 
 Currently, tooling contains:
-    - `new_project.sh` script. This script supports project generation with or without tests in the following languages:
+    - `new_project.sh` script: generates projects with or without tests in the following languages:
         - c
         - cpp
-    - `test.sh` script. This script locate project tests based on project set up and runs them in github workflows.
+    - `test.sh`: locates project tests based on project set up and runs them for github workflows.
 
 Tooling scripts should be called from repository root directory.
 
