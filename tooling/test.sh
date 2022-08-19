@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euxo pipefail
 for project in *; do
     if [ -d "$project" ]; then
         printf "testing \"%s\" project...\n" $project
