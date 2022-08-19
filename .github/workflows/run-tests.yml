@@ -4,13 +4,11 @@ jobs:
   run-unit-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Install gtest manually
+      - name: install gtest manually
         run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+      - name: install valgrind
+        run: sudo apt-get install valgrind
       - uses: actions/checkout@v3
-      # - name: configure
-      #   run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-Werror" ..
-      # - name: make
-      #   run: cd build && make
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8'
