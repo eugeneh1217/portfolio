@@ -264,8 +264,3 @@ TEST_F(HashmapTests, TestClear)
         EXPECT_EQ(hashmap_get(hashmap, &keys[i], &ret), KEY_NOT_FOUND_ERR);
     }
 }
-
-TEST(FailTest, FailTest)
-{
-    EXPECT_EQ(1, 0);
-}
