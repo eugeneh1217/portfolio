@@ -1,0 +1,11 @@
+name: run-tests
+on: [push]
+jobs:
+  run-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8' 
+      - run: "bash tooling/test.sh"
