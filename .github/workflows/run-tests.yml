@@ -6,6 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: lukka/get-cmake@latest
+      - uses: arvsrao/googletest-action@master
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8' 
