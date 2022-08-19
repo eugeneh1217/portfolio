@@ -1,13 +1,16 @@
 #!/bin/bash
-set -euxo pipefail
+set -e
 for project in *; do
     if [ -d "$project" ]; then
         printf "testing \"%s\" project...\n" $project
         if [ -d "$project/src" ]; then
             printf "language: c\n"
             if [ -d "$project/test" ]; then
-                cd $project && cmake -B build
-                cd build && make && valgrind ./tests
+                cd $project
+                cmake -B build
+                cd build
+                make
+                valgrind ./tests
                 cd ../..
                 printf "\n"
             fi
@@ -15,7 +18,7 @@ for project in *; do
             printf "language: python\n"
             if [ -d "$project/test" ]; then
                 pip install -r $project/requirements.txt
-                python -m unittest discover $project
+                python3 -m unittest discover $project
                 printf "\n"
             else
                 printf "no tests found\n\n"
