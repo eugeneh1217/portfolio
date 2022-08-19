@@ -22,23 +22,23 @@ FetchContent_Declare(
 enable_testing()
 
 add_executable(
-    hashmap_test
+    tests
     src/hashmap.c
     test/src/test_hashmap.cc
 )
 
 target_link_libraries(
-    hashmap_test
+    tests
     gtest_main
     gtest
     pthread
 )
 
 target_include_directories(
-    hashmap_test PUBLIC
+    tests PUBLIC
     include/
     test/include/
 )
 
 include(GoogleTest)
-gtest_discover_tests(hashmap_test)
+gtest_discover_tests(tests)
