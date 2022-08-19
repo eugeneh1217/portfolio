@@ -14,12 +14,8 @@ for project in *; do
         elif [ -f "$project/__init__.py" ]; then
             printf "language: python\n"
             if [ -d "$project/test" ]; then
-                virtualenv .test
-                source .test/bin/activate
                 pip install -r $project/requirements.txt
                 python -m unittest discover $project
-                deactivate
-                rm -rf .test
                 printf "\n"
             else
                 printf "no tests found\n\n"
